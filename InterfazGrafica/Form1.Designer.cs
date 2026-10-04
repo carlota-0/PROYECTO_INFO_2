@@ -47,7 +47,7 @@
             // 
             // menuOpciones
             // 
-            menuOpciones.DropDownItems.AddRange(new ToolStripItem[] { menuPlanesVuelo, menuParametros });
+            menuOpciones.DropDownItems.AddRange(new ToolStripItem[] { menuPlanesVuelo, menuParametros, menuSimulacion });
             menuOpciones.Name = "menuOpciones";
             menuOpciones.Size = new Size(103, 29);
             menuOpciones.Text = "Opciones";
@@ -66,6 +66,14 @@
             menuParametros.Size = new Size(320, 34);
             menuParametros.Text = "Parámetros de vuelo";
             menuParametros.Click += menuParametros_Click;
+            // 
+            // menuSimulacion
+            // 
+            menuSimulacion = new ToolStripMenuItem();
+            menuSimulacion.Name = "menuSimulacion";
+            menuSimulacion.Size = new Size(320, 34);
+            menuSimulacion.Text = "Iniciar simulación";
+            menuSimulacion.Click += menuSimulacion_Click;
             // 
             // Form1
             // 
@@ -88,5 +96,6 @@
         private ToolStripMenuItem menuOpciones;
         private ToolStripMenuItem menuPlanesVuelo;
         private ToolStripMenuItem menuParametros;
+        private ToolStripMenuItem menuSimulacion;
     }
 }

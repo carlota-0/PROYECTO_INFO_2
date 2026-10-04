@@ -47,5 +47,18 @@ namespace InterfazGrafica
                 MessageBox.Show($"Parámetros guardados correctamente:\nDistancia de seguridad: {distanciaSeguridad}\nTiempo de ciclo: {tiempoCiclo}");
             }
         }
+        private void menuSimulacion_Click(object sender, EventArgs e)
+        {
+            // Comprobamos que el usuario haya introducido primero los aviones
+            if (plan1 == null || plan2 == null)
+            {
+                MessageBox.Show("Por favor, introduce primero los planes de vuelo.");
+                return;
+            }
+
+            // Creamos y abrimos el nuevo formulario pasándole los dos planes
+            FormSimulacion formSim = new FormSimulacion(plan1, plan2);
+            formSim.ShowDialog();
+        }
     }
 }
