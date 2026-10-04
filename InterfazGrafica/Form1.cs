@@ -56,7 +56,7 @@ namespace InterfazGrafica
                 return;
             }
 
-            // Creamos y abrimos el nuevo formulario pasándole los dos planes
+            // Creamos y abrimos el nuevo formulario pasándole los dos planes de vuelo
             FormSimulacion formSim = new FormSimulacion(plan1, plan2);
             formSim.ShowDialog();
         }
