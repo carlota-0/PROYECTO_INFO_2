@@ -100,6 +100,7 @@
             Controls.Add(distanciaSeglbl);
             Name = "FormParametros";
             Text = "FormParametros";
+            Load += FormParametros_Load;
             ResumeLayout(false);
             PerformLayout();
         }

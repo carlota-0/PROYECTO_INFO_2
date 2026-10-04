@@ -80,7 +80,7 @@ namespace FlightLib
             double x = currentPosition.GetX() + distancia * coseno;
             double y = currentPosition.GetY() + distancia * seno;
 
-            //Modificar MoverVuelo para que nose pase del destino
+            //Modificar MoverVuelo para que no se pase del destino
             Position nextPosition = new Position(x, y);
             if (currentPosition.Distancia(nextPosition) < hipotenusa)
                 currentPosition = nextPosition;

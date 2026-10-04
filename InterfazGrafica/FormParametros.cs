@@ -17,21 +17,39 @@ namespace InterfazGrafica
         {
             InitializeComponent();
             btnCancelar.DialogResult = DialogResult.Cancel;
-                
+
         }
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
             // --- Distancia de seguridad ---
-            // TryParse devuelve false si el texto no es un número (o está vacío)
-            if (!double.TryParse(distSeguridad.Text, out distancia) || distancia <= 0)
+          
+            try
+            {
+                distancia = Convert.ToDouble(distSeguridad.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Distancia de seguridad incorrecta, escribe un número");
+                return;  
+            }
+            if (distancia<= 0)
             {
                 MessageBox.Show("Distancia de seguridad incorrecta, escribe un número mayor que 0");
-                return;   // salimos sin cerrar el formulario
+                return;
             }
 
             // --- Tiempo de ciclo ---
-            if (!double.TryParse(tiempoC.Text, out tiempo) || tiempo <= 0)
+            try
+            {
+                tiempo = Convert.ToDouble(tiempoC.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Tiempo de ciclo incorrecto, escribe un número");
+                return;
+            }
+            if (tiempo<= 0)
             {
                 MessageBox.Show("Tiempo de ciclo incorrecto, escribe un número mayor que 0");
                 return;
@@ -44,6 +62,10 @@ namespace InterfazGrafica
             DialogResult = DialogResult.OK;
             Close();
         }
-    
+
+        private void FormParametros_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

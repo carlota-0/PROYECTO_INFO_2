@@ -11,7 +11,7 @@ namespace InterfazGrafica
         private PictureBox avion1;
         private PictureBox avion2;
         private Button btnMover;
-        
+
         private FlightPlan p1;
         private FlightPlan p2;
 
@@ -20,43 +20,44 @@ namespace InterfazGrafica
         {
             this.p1 = plan1;
             this.p2 = plan2;
-            
+
             InitializeComponent();
             ConfigurarAviones();
         }
 
         private void InitializeComponent()
         {
-            this.panelEspacioAereo = new Panel();
-            this.SuspendLayout();
-            
+            panelEspacioAereo = new Panel();
+            btnMover = new Button();
+            SuspendLayout();
             // 
             // panelEspacioAereo
             // 
-            this.panelEspacioAereo.BackColor = Color.LightGray; // Fondo gris para distinguirlo
-            this.panelEspacioAereo.Location = new Point(20, 20);
-            this.panelEspacioAereo.Name = "panelEspacioAereo";
-            this.panelEspacioAereo.Size = new Size(600, 400); 
-            this.panelEspacioAereo.Paint += new PaintEventHandler(this.panelEspacioAereo_Paint);
+            panelEspacioAereo.BackColor = Color.LightGray;
+            panelEspacioAereo.Location = new Point(20, 20);
+            panelEspacioAereo.Name = "panelEspacioAereo";
+            panelEspacioAereo.Size = new Size(600, 400);
+            panelEspacioAereo.TabIndex = 1;
+            panelEspacioAereo.Paint += panelEspacioAereo_Paint;
             // 
             // btnMover
             // 
-            this.btnMover = new Button();
-            this.btnMover.Location = new Point(250, 425); // Lo centramos debajo del panel
-            this.btnMover.Size = new Size(150, 30);
-            this.btnMover.Text = "Avanzar Ciclo";
-            this.btnMover.Click += new EventHandler(this.btnMover_Click);
-
-            this.ClientSize = new Size(650, 480); // Hacemos la ventana un poco más alta para que quepa el botón
-            this.Controls.Add(this.btnMover);
-            
+            btnMover.Location = new Point(250, 425);
+            btnMover.Name = "btnMover";
+            btnMover.Size = new Size(150, 30);
+            btnMover.TabIndex = 0;
+            btnMover.Text = "Avanzar Ciclo";
+            btnMover.Click += btnMover_Click;
             // 
             // FormSimulacion
             // 
-            this.Controls.Add(this.panelEspacioAereo);
-            this.Name = "FormSimulacion";
-            this.Text = "Simulación del Espacio Aéreo";
-            this.ResumeLayout(false);
+            ClientSize = new Size(650, 480);
+            Controls.Add(btnMover);
+            Controls.Add(panelEspacioAereo);
+            Name = "FormSimulacion";
+            Text = "Simulación del Espacio Aéreo";
+            Load += FormSimulacion_Load;
+            ResumeLayout(false);
         }
 
         private void ConfigurarAviones()
@@ -65,19 +66,19 @@ namespace InterfazGrafica
             avion1 = new PictureBox();
             avion1.Width = 20;
             avion1.Height = 20;
-            avion1.BackColor = Color.Blue; 
+            avion1.BackColor = Color.Blue;
             avion1.Location = new Point((int)p1.GetInitialPosition().GetX(), (int)p1.GetInitialPosition().GetY());
             avion1.Tag = p1;
             avion1.Click += new EventHandler(this.avion_Click);
             panelEspacioAereo.Controls.Add(avion1);
-            
-            
+
+
 
             // Dibujamos el Avión 2 (Usaremos un cuadrado rojo por ahora)
             avion2 = new PictureBox();
             avion2.Width = 20;
             avion2.Height = 20;
-            avion2.BackColor = Color.Red; 
+            avion2.BackColor = Color.Red;
             avion2.Location = new Point((int)p2.GetInitialPosition().GetX(), (int)p2.GetInitialPosition().GetY());
             avion2.Tag = p2;
             avion2.Click += new EventHandler(this.avion_Click);
@@ -86,8 +87,8 @@ namespace InterfazGrafica
         private void btnMover_Click(object sender, EventArgs e)
         {
             // Usamos 10 como tiempo de ciclo por defecto (como en SimulatorConsole)
-            double tiempoCiclo = 10; 
-    
+            double tiempoCiclo = 10;
+
             // Movemos los datos lógicos del avión
             p1.Mover(tiempoCiclo);
             p2.Mover(tiempoCiclo);
@@ -102,7 +103,7 @@ namespace InterfazGrafica
         {
             // Recuperamos el PictureBox que ha sido clicado
             PictureBox avionClicado = (PictureBox)sender;
-    
+
             // Recuperamos el plan de vuelo que guardamos en su propiedad Tag
             FlightPlan plan = (FlightPlan)avionClicado.Tag;
 
@@ -116,7 +117,7 @@ namespace InterfazGrafica
         private void panelEspacioAereo_Paint(object sender, PaintEventArgs e)
         {
             Graphics graphics = e.Graphics;
-    
+
             // Creamos un "lápiz" negro para dibujar las trayectorias
             Pen myPen = new Pen(Color.Black);
 
@@ -134,9 +135,9 @@ namespace InterfazGrafica
             myPen.Dispose();
             // --- FASE 7: DISTANCIA DE SEGURIDAD ---
             // Usaremos un radio de 40 píxeles como representación visual
-            int radioSeguridad = 40; 
+            int radioSeguridad = 40;
             // Como definimos que los aviones miden 20x20, su centro está a 10 píxeles
-            int mitadAvion = 10; 
+            int mitadAvion = 10;
 
             // Creamos un lápiz naranja
             Pen penSeguridad = new Pen(Color.Orange);
@@ -153,6 +154,11 @@ namespace InterfazGrafica
             graphics.DrawEllipse(penSeguridad, centroX2 - radioSeguridad, centroY2 - radioSeguridad, radioSeguridad * 2, radioSeguridad * 2);
 
             penSeguridad.Dispose();
+        }
+
+        private void FormSimulacion_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

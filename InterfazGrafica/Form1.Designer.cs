@@ -32,6 +32,7 @@
             menuOpciones = new ToolStripMenuItem();
             menuPlanesVuelo = new ToolStripMenuItem();
             menuParametros = new ToolStripMenuItem();
+            menuSimulacion = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -69,7 +70,7 @@
             // 
             // menuSimulacion
             // 
-            menuSimulacion = new ToolStripMenuItem();
+            
             menuSimulacion.Name = "menuSimulacion";
             menuSimulacion.Size = new Size(320, 34);
             menuSimulacion.Text = "Iniciar simulación";

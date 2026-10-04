@@ -40,7 +40,8 @@ namespace InterfazGrafica
             double x2 = 0, y2 = 0, xf2 = 0, yf2 = 0, vel2 = 0;
 
             //1r leer y comprobar vuelo1
-            string id1 = textID1.Text;
+            string id1 = textID1.Text.Trim();
+            //Trim() elimina espacios en blanco!!
             if (id1 == "")
             {
                 MessageBox.Show("Vuelo 1: ID vacía, escribe un identificador");
@@ -55,15 +56,19 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 1: Posición inicial incorrecta, escribe x,y");
                 return;
             }
-            else
+            try
             {
-           
-                if (!double.TryParse(ini1[0], out x1) || !double.TryParse(ini1[1], out y1))
-                {
-                    MessageBox.Show("Vuelo 1: Posición inicial incorrecta, escribe x,y");
-                    return;
-                }
+
+                x1 = Convert.ToDouble(ini1[0]);
+                y1 = Convert.ToDouble(ini1[1]);
             }
+            catch 
+            {
+                MessageBox.Show("Vuelo 1: Posición inicial incorrecta, escribe x,y");
+                return;
+            }
+              
+    
 
             //POSICION FINAL(x,y)
             string[] fin1 = Fin1.Text.Split(",");
@@ -72,25 +77,47 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 1: Posición final incorrecta, escribe x,y");
                 return;
             }
-            else
+            
+            try
             {
-                
-                if (!double.TryParse(fin1[0], out xf1) || !double.TryParse(fin1[1], out yf1))
-                {
-                    MessageBox.Show("Vuelo 1: Posición final incorrecta, escribe x,y");
-                    return;
-                }
+                x1 = Convert.ToDouble(fin1[0]);
+                y1 = Convert.ToDouble(fin1[1]);
             }
-
-            //VELOCIDAD
-           
-            if (!double.TryParse(textVelocidad1.Text, out vel1) || vel1 <= 0)
+            catch
             {
-                MessageBox.Show("Vuelo 1: Velocidad incorrecta, escribe un número mayor que 0");
+                MessageBox.Show("Vuelo 1: Posición final incorrecta, escribe x,y");
                 return;
             }
 
+            //VELOCIDAD
+
+            try
+            {
+                vel1 = Convert.ToDouble(textVelocidad1.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Vuelo 1: Velocidad incorrecta, escribe un número");
+                return;
+            }
+
+            if (vel1 <= 0)
+            {
+                MessageBox.Show("Vuelo 1: Velocidad incorrecta, escribe un número mayor que 0");
+                return;
+    
+            }
+
+            //POSICION INICIAL Y FINAL 1 NO IGUALES
+            if (x1 == xf1 && y1 == yf1)
+            {
+                MessageBox.Show("Vuelo 1: Posición inicial y final no pueden ser iguales");
+                return;
+            }
+
+            //_____________________
             //VUELO2
+            //_____________________
             string id2 = textID2.Text;
             if (id2 == "")
             {
@@ -106,14 +133,16 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 2: Posición inicial incorrecta, escribe x,y");
                 return;
             }
-            else
+            try
             {
-               
-                if (!double.TryParse(ini2[0], out x2) || !double.TryParse(ini2[1], out y2))
-                {
-                    MessageBox.Show("Vuelo 2: Posición inicial incorrecta, escribe x,y");
-                    return;
-                }
+
+                x2 = Convert.ToDouble(ini2[0]);
+                y2 = Convert.ToDouble(ini2[1]);
+            }
+            catch
+            {
+                MessageBox.Show("Vuelo 2: Posición inicial incorrecta, escribe x,y");
+                return;
             }
 
             //POSICION FINAL(x,y)
@@ -123,26 +152,47 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 2: Posición final incorrecta, escribe x,y");
                 return;
             }
-            else
+            try
             {
-                
-                if (!double.TryParse(fin2[0], out xf2) || !double.TryParse(fin2[1], out yf2))
-                {
-                    MessageBox.Show("Vuelo 2: Posición final incorrecta, escribe x,y");
-                    return;
-                }
+                xf2 = Convert.ToDouble(fin2[0]);
+                yf2 = Convert.ToDouble(fin2[1]);
+            }
+            catch
+            {
+                MessageBox.Show("Vuelo 2: Posición final incorrecta, escribe x,y");
+                return;
             }
 
             //VELOCIDAD
-           
-            if (!double.TryParse(textVelocidad2.Text, out vel2) || vel2 <= 0)
+
+            try
+            {
+                vel2 = Convert.ToDouble(textVelocidad2.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Vuelo 2: Velocidad incorrecta, escribe un número");
+                return;
+            }
+
+            if (vel2 <= 0)
             {
                 MessageBox.Show("Vuelo 2: Velocidad incorrecta, escribe un número mayor que 0");
+                return;
+
+            }
+
+
+            //POSICION INICIAL Y FINAL 2 NO IGUALES
+            if (x2 == xf2 && y2 == yf2)
+            {
+                MessageBox.Show("Vuelo 2: Posición inicial y final no pueden ser iguales");
                 return;
             }
 
             //COMPROBACION ID NO IGUALES
-            if (id1 == id2)
+            if (id1.ToUpper() == id2.ToUpper())
+            //Añadimos ToUpper()para que si lo escribimos en minúsculas también se acepte
             {
                 MessageBox.Show("Los identificadores de los vuelos no pueden ser iguales");
                 return;
