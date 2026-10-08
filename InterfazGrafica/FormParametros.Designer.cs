@@ -86,6 +86,15 @@
             btnCancelar.TabIndex = 5;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
+            //
+            // btnDefecto
+            //
+            btnDefecto = new Button();
+            btnDefecto.Location = new Point(49, 229); // Lo ponemos a la izquierda
+            btnDefecto.Size = new Size(112, 34);
+            btnDefecto.Text = "Por defecto";
+            btnDefecto.Click += btnDefecto_Click;
+            this.Controls.Add(btnDefecto);
             // 
             // FormParametros
             // 
@@ -113,5 +122,6 @@
         private TextBox tiempoC;
         private Button btnAceptar;
         private Button btnCancelar;
+        private Button btnDefecto;
     }
 }

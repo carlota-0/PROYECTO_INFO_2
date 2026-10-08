@@ -174,6 +174,15 @@
             btnCancelar.TabIndex = 15;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
+            //
+            // btnDefecto
+            //
+            btnDefecto = new Button();
+            btnDefecto.Location = new Point(57, 247); // Lo ponemos a la izquierda
+            btnDefecto.Size = new Size(112, 34);
+            btnDefecto.Text = "Por defecto";
+            btnDefecto.Click += btnDefecto_Click;
+            this.Controls.Add(btnDefecto);
             // 
             // FormPlanesVuelo
             // 

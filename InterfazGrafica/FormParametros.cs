@@ -67,5 +67,10 @@ namespace InterfazGrafica
         {
 
         }
+        private void btnDefecto_Click(object sender, EventArgs e)
+        {
+            distSeguridad.Text = "50";
+            tiempoC.Text = "10";
+        }
     }
 }

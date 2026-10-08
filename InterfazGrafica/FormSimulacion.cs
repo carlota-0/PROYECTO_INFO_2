@@ -11,15 +11,20 @@ namespace InterfazGrafica
         private PictureBox avion1;
         private PictureBox avion2;
         private Button btnMover;
+        private Button btnReiniciar;
 
         private FlightPlan p1;
         private FlightPlan p2;
+        private FlightPlanList listaVuelos;
 
         // El constructor recibe los planes de vuelo desde Form1
         public FormSimulacion(FlightPlan plan1, FlightPlan plan2)
         {
             this.p1 = plan1;
             this.p2 = plan2;
+            this.listaVuelos = new FlightPlanList();
+            this.listaVuelos.AddFlightPlan(p1);
+            this.listaVuelos.AddFlightPlan(p2);
 
             InitializeComponent();
             ConfigurarAviones();
@@ -48,6 +53,15 @@ namespace InterfazGrafica
             btnMover.TabIndex = 0;
             btnMover.Text = "Avanzar Ciclo";
             btnMover.Click += btnMover_Click;
+            //
+            //btnReiniciar
+            //
+            this.btnReiniciar = new Button();
+            this.btnReiniciar.Location = new Point(410, 425);
+            this.btnReiniciar.Size = new Size(150, 30);
+            this.btnReiniciar.Text = "Reiniciar";
+            this.btnReiniciar.Click += new EventHandler(this.btnReiniciar_Click);
+            this.Controls.Add(this.btnReiniciar);
             // 
             // FormSimulacion
             // 
@@ -89,14 +103,25 @@ namespace InterfazGrafica
             // Usamos 10 como tiempo de ciclo por defecto (como en SimulatorConsole)
             double tiempoCiclo = 10;
 
-            // Movemos los datos lógicos del avión
-            p1.Mover(tiempoCiclo);
-            p2.Mover(tiempoCiclo);
+            // Movemos todos los aviones de la lista a la vez
+            listaVuelos.Mover(tiempoCiclo);
 
             // Actualizamos la posición visual en el panel
             avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
             // Obliga al panel a borrar y volver a dibujar todo (líneas, aviones y círculos) en la nueva posición
+            panelEspacioAereo.Invalidate();
+        }
+        private void btnReiniciar_Click(object sender, EventArgs e)
+        {
+            // Reiniciamos las coordenadas lógicas
+            p1.Restart();
+            p2.Restart();
+
+            // Actualizamos visualmente
+            avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
+            avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
+    
             panelEspacioAereo.Invalidate();
         }
         private void avion_Click(object sender, EventArgs e)
@@ -117,21 +142,34 @@ namespace InterfazGrafica
         private void panelEspacioAereo_Paint(object sender, PaintEventArgs e)
         {
             Graphics graphics = e.Graphics;
-
-            // Creamos un "lápiz" negro para dibujar las trayectorias
             Pen myPen = new Pen(Color.Black);
 
-            // Dibujar trayectoria del Avión 1 (desde posición inicial a la final)
-            Point inicio1 = new Point((int)p1.GetInitialPosition().GetX(), (int)p1.GetInitialPosition().GetY());
-            Point fin1 = new Point((int)p1.GetFinalPosition().GetX(), (int)p1.GetFinalPosition().GetY());
-            graphics.DrawLine(myPen, inicio1, fin1);
+            // Como los aviones miden 20x20, sumamos 10 para apuntar al centro
+            int centro = 10;
 
-            // Dibujar trayectoria del Avión 2
-            Point inicio2 = new Point((int)p2.GetInitialPosition().GetX(), (int)p2.GetInitialPosition().GetY());
-            Point fin2 = new Point((int)p2.GetFinalPosition().GetX(), (int)p2.GetFinalPosition().GetY());
-            graphics.DrawLine(myPen, inicio2, fin2);
+            // --- TRAYECTORIA AVIÓN 1 ---
+            Point ini1 = new Point((int)p1.GetInitialPosition().GetX() + centro, (int)p1.GetInitialPosition().GetY() + centro);
+            Point fin1 = new Point((int)p1.GetFinalPosition().GetX() + centro, (int)p1.GetFinalPosition().GetY() + centro);
+    
+            // Calculamos la dirección y creamos puntos extremadamente lejanos para que crucen toda la pantalla
+            int dx1 = fin1.X - ini1.X;
+            int dy1 = fin1.Y - ini1.Y;
+            Point bordeIni1 = new Point(ini1.X - dx1 * 100, ini1.Y - dy1 * 100);
+            Point bordeFin1 = new Point(ini1.X + dx1 * 100, ini1.Y + dy1 * 100);
+    
+            graphics.DrawLine(myPen, bordeIni1, bordeFin1);
 
-            // Liberamos el recurso del lápiz
+            // --- TRAYECTORIA AVIÓN 2 ---
+            Point ini2 = new Point((int)p2.GetInitialPosition().GetX() + centro, (int)p2.GetInitialPosition().GetY() + centro);
+            Point fin2 = new Point((int)p2.GetFinalPosition().GetX() + centro, (int)p2.GetFinalPosition().GetY() + centro);
+    
+            int dx2 = fin2.X - ini2.X;
+            int dy2 = fin2.Y - ini2.Y;
+            Point bordeIni2 = new Point(ini2.X - dx2 * 100, ini2.Y - dy2 * 100);
+            Point bordeFin2 = new Point(ini2.X + dx2 * 100, ini2.Y + dy2 * 100);
+    
+            graphics.DrawLine(myPen, bordeIni2, bordeFin2);
+
             myPen.Dispose();
             // --- FASE 7: DISTANCIA DE SEGURIDAD ---
             // Usaremos un radio de 40 píxeles como representación visual

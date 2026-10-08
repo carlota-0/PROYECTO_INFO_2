@@ -28,8 +28,8 @@ namespace InterfazGrafica
             // Si ha dado Aceptar, recogemos los dos planes
             if (resultado == DialogResult.OK)
             {
-                plan1 = f.Plan1;
-                plan2 = f.Plan2;
+                plan1 = f.GetPlan1();
+                plan2 = f.GetPlan2();
                 MessageBox.Show("Planes de vuelo guardados correctamente");
             }
 

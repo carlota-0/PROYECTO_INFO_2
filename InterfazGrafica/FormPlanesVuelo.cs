@@ -12,8 +12,18 @@ namespace InterfazGrafica
 {
     public partial class FormPlanesVuelo : Form
     {
-        public FlightPlan Plan1;
-        public FlightPlan Plan2;
+        private FlightPlan Plan1;
+        private FlightPlan Plan2;
+
+        public FlightPlan GetPlan1()
+        {
+            return Plan1;
+        }
+
+        public FlightPlan GetPlan2()
+        {
+            return Plan2;
+        }
         public FormPlanesVuelo()
         {
             InitializeComponent();
@@ -30,6 +40,18 @@ namespace InterfazGrafica
         private void FormPlanesVuelo_Load(object sender, EventArgs e)
         {
 
+        }
+        private void btnDefecto_Click(object sender, EventArgs e)
+        {
+            textID1.Text = "IBE123";
+            Ini1.Text = "50,50";
+            Fin1.Text = "400,300";
+            textVelocidad1.Text = "150";
+
+            textID2.Text = "RYR456";
+            Ini2.Text = "400,50";
+            Fin2.Text = "50,300";
+            textVelocidad2.Text = "150";
         }
 
 
