@@ -6,6 +6,7 @@
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        
 
         /// <summary>
         /// Clean up any resources being used.
@@ -44,6 +45,8 @@
             Ini1 = new TextBox();
             btnAceptar = new Button();
             btnCancelar = new Button();
+            btnDefecto = new Button();
+            this.Controls.Add(btnDefecto);
             SuspendLayout();
             // 
             // Vuelo1
@@ -177,12 +180,12 @@
             //
             // btnDefecto
             //
-            btnDefecto = new Button();
+           
             btnDefecto.Location = new Point(57, 247); // Lo ponemos a la izquierda
             btnDefecto.Size = new Size(112, 34);
             btnDefecto.Text = "Por defecto";
             btnDefecto.Click += btnDefecto_Click;
-            this.Controls.Add(btnDefecto);
+            
             // 
             // FormPlanesVuelo
             // 
@@ -230,5 +233,6 @@
         private TextBox Ini1;
         private Button btnAceptar;
         private Button btnCancelar;
+        private Button btnDefecto;
     }
 }

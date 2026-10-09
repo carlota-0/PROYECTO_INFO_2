@@ -34,6 +34,7 @@
             tiempoC = new TextBox();
             btnAceptar = new Button();
             btnCancelar = new Button();
+            btnDefecto = new Button();
             SuspendLayout();
             // 
             // distanciaSeglbl
@@ -70,7 +71,7 @@
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(106, 229);
+            btnAceptar.Location = new Point(49, 229);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(112, 34);
             btnAceptar.TabIndex = 4;
@@ -80,27 +81,28 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(290, 229);
+            btnCancelar.Location = new Point(341, 229);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(112, 34);
             btnCancelar.TabIndex = 5;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
-            //
+            // 
             // btnDefecto
-            //
-            btnDefecto = new Button();
-            btnDefecto.Location = new Point(49, 229); // Lo ponemos a la izquierda
+            // 
+            btnDefecto.Location = new Point(192, 229);
+            btnDefecto.Name = "btnDefecto";
             btnDefecto.Size = new Size(112, 34);
+            btnDefecto.TabIndex = 0;
             btnDefecto.Text = "Por defecto";
             btnDefecto.Click += btnDefecto_Click;
-            this.Controls.Add(btnDefecto);
             // 
             // FormParametros
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(512, 353);
+            Controls.Add(btnDefecto);
             Controls.Add(btnCancelar);
             Controls.Add(btnAceptar);
             Controls.Add(tiempoC);
