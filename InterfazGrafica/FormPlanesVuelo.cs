@@ -102,8 +102,8 @@ namespace InterfazGrafica
             
             try
             {
-                x1 = Convert.ToDouble(fin1[0]);
-                y1 = Convert.ToDouble(fin1[1]);
+                xf1 = Convert.ToDouble(fin1[0]);
+                yf1 = Convert.ToDouble(fin1[1]);
             }
             catch
             {
@@ -140,7 +140,7 @@ namespace InterfazGrafica
             //_____________________
             //VUELO2
             //_____________________
-            string id2 = textID2.Text;
+            string id2 = textID2.Text.Trim();
             if (id2 == "")
             {
                 MessageBox.Show("Vuelo 2: ID vacía, escribe un identificador");
