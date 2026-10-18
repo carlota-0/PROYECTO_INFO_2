@@ -14,6 +14,7 @@ namespace InterfazGrafica
         private Button btnReiniciar;
         private double distanciaSeg;
         private Button btnPredecir;
+        private Button btnDatos;
 
         private FlightPlan p1;
         private FlightPlan p2;
@@ -111,6 +112,18 @@ namespace InterfazGrafica
             btnPredecir.TabIndex = 1;
             btnPredecir.Text = "Predecir Conflicto";
             btnPredecir.Click += btnPredecir_Click;
+            //
+            //btn Datos Vuelo
+            //
+            this.btnDatos = new Button();
+            this.btnDatos.Location = new Point(250, 460); // Justo debajo del botón Mover
+            this.btnDatos.Size = new Size(150, 30);
+            this.btnDatos.Text = "Mostrar Datos";
+            this.btnDatos.Click += new EventHandler(this.btnDatos_Click);
+            this.Controls.Add(this.btnDatos);
+
+// Aumentamos un pelín el alto total de la ventana para que quepa este nuevo botón
+            this.ClientSize = new Size(650, 510);
             // 
             // FormSimulacion
             // 
@@ -151,7 +164,6 @@ namespace InterfazGrafica
             avion2.Click += new EventHandler(this.avion_Click);
             panelEspacioAereo.Controls.Add(avion2);
         }
-
         private void AvanzarCiclo()
         {
 
@@ -171,8 +183,6 @@ namespace InterfazGrafica
                 MessageBox.Show("Todos los vuelos han llegado a su destino. Simulación terminada.");
             }
         }
-
-
         private void PararAutomatica()
         {
             timerSimulador.Stop();
@@ -180,11 +190,6 @@ namespace InterfazGrafica
             btnDetener.Enabled = false;
             btnMover.Enabled = true;
         }
-
-
-
-
-
         private void btnMover_Click(object sender, EventArgs e)
         {
 
@@ -311,8 +316,7 @@ namespace InterfazGrafica
 
             penSeguridad.Dispose();
         }
-
-
+        
         private void btnAuto_Click(object sender, EventArgs e)
         {
             if (p1.EstaDestino() && p2.EstaDestino())
@@ -360,6 +364,12 @@ namespace InterfazGrafica
             PararAutomatica();
 
         }
+        
+        private void btnDatos_Click(object sender, EventArgs e)
+        {
+            FormDatosVuelos formDatos = new FormDatosVuelos(p1, p2);
+            formDatos.ShowDialog();
+        }
 
         private void timerSimulador_Tick(object sender, EventArgs e)
         {
@@ -370,6 +380,8 @@ namespace InterfazGrafica
         {
             timerSimulador.Stop();
         }
+        
+        
 
         
 
