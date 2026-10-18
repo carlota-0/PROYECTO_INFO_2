@@ -15,6 +15,10 @@ namespace InterfazGrafica
 
         private FlightPlan p1;
         private FlightPlan p2;
+        private Button btnAuto;
+        private Button btnDetener;
+        private System.Windows.Forms.Timer timerSimulador;
+        private System.ComponentModel.IContainer components;
         private FlightPlanList listaVuelos;
 
         // El constructor recibe los planes de vuelo desde Form1
@@ -32,8 +36,13 @@ namespace InterfazGrafica
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             panelEspacioAereo = new Panel();
             btnMover = new Button();
+            btnReiniciar = new Button();
+            btnAuto = new Button();
+            btnDetener = new Button();
+            timerSimulador = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -47,29 +56,59 @@ namespace InterfazGrafica
             // 
             // btnMover
             // 
-            btnMover.Location = new Point(250, 425);
+            btnMover.Location = new Point(296, 430);
             btnMover.Name = "btnMover";
             btnMover.Size = new Size(150, 30);
             btnMover.TabIndex = 0;
             btnMover.Text = "Avanzar Ciclo";
             btnMover.Click += btnMover_Click;
-            //
-            //btnReiniciar
-            //
-            this.btnReiniciar = new Button();
-            this.btnReiniciar.Location = new Point(410, 425);
-            this.btnReiniciar.Size = new Size(150, 30);
-            this.btnReiniciar.Text = "Reiniciar";
-            this.btnReiniciar.Click += new EventHandler(this.btnReiniciar_Click);
-            this.Controls.Add(this.btnReiniciar);
+            // 
+            // btnReiniciar
+            // 
+            btnReiniciar.Location = new Point(470, 432);
+            btnReiniciar.Name = "btnReiniciar";
+            btnReiniciar.Size = new Size(150, 30);
+            btnReiniciar.TabIndex = 0;
+            btnReiniciar.Text = "Reiniciar";
+            btnReiniciar.Click += btnReiniciar_Click;
+            // 
+            // btnAuto
+            // 
+            btnAuto.Location = new Point(20, 430);
+            btnAuto.Name = "btnAuto";
+            btnAuto.Size = new Size(123, 34);
+            btnAuto.TabIndex = 2;
+            btnAuto.Text = "Automático";
+            btnAuto.UseVisualStyleBackColor = true;
+            btnAuto.Click += btnAuto_Click;
+            // 
+            // btnDetener
+            // 
+            btnDetener.Enabled = false;
+            btnDetener.Location = new Point(161, 432);
+            btnDetener.Name = "btnDetener";
+            btnDetener.Size = new Size(112, 34);
+            btnDetener.TabIndex = 3;
+            btnDetener.Text = "Detener";
+            btnDetener.UseVisualStyleBackColor = true;
+            btnDetener.Click += btnDetener_Click;
+            // 
+            // timerSimulador
+            // 
+            timerSimulador.Interval = 500;
+            timerSimulador.Tick += timerSimulador_Tick;
             // 
             // FormSimulacion
             // 
             ClientSize = new Size(650, 480);
+            Controls.Add(btnDetener);
+            Controls.Add(btnAuto);
+            Controls.Add(btnReiniciar);
             Controls.Add(btnMover);
             Controls.Add(panelEspacioAereo);
             Name = "FormSimulacion";
             Text = "Simulación del Espacio Aéreo";
+            FormClosing += FormSimulacion_FormClosing;
             Load += FormSimulacion_Load;
             ResumeLayout(false);
         }
@@ -98,6 +137,42 @@ namespace InterfazGrafica
             avion2.Click += new EventHandler(this.avion_Click);
             panelEspacioAereo.Controls.Add(avion2);
         }
+
+        private void AvanzarCiclo()
+        {
+
+            double tiempoCiclo = 10;
+
+            // Movemos todos los aviones de la lista a la vez
+            listaVuelos.Mover(tiempoCiclo);
+
+            // Actualizamos la posición en el panel 
+            avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
+            avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
+            // Hacemos que panel borre todo y lo vuelva a dibujar
+            panelEspacioAereo.Invalidate();
+
+            // Si activamoss simulación automática y los dos han llegado se paran los dos
+            if (timerSimulador.Enabled && p1.EstaDestino() && p2.EstaDestino())
+            {
+                PararAutomatica();
+                MessageBox.Show("Todos los vuelos han llegado a su destino. Simulación terminada.");
+            }
+        }
+
+
+        private void PararAutomatica()
+        {
+            timerSimulador.Stop();
+            btnAuto.Enabled = true;
+            btnDetener.Enabled = false;
+            btnMover.Enabled = true;
+        }
+
+
+
+
+
         private void btnMover_Click(object sender, EventArgs e)
         {
             // Usamos 10 como tiempo de ciclo por defecto (como en SimulatorConsole)
@@ -121,7 +196,7 @@ namespace InterfazGrafica
             // Actualizamos visualmente
             avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
-    
+
             panelEspacioAereo.Invalidate();
         }
         private void avion_Click(object sender, EventArgs e)
@@ -150,24 +225,24 @@ namespace InterfazGrafica
             // --- TRAYECTORIA AVIÓN 1 ---
             Point ini1 = new Point((int)p1.GetInitialPosition().GetX() + centro, (int)p1.GetInitialPosition().GetY() + centro);
             Point fin1 = new Point((int)p1.GetFinalPosition().GetX() + centro, (int)p1.GetFinalPosition().GetY() + centro);
-    
+
             // Calculamos la dirección y creamos puntos extremadamente lejanos para que crucen toda la pantalla
             int dx1 = fin1.X - ini1.X;
             int dy1 = fin1.Y - ini1.Y;
             Point bordeIni1 = new Point(ini1.X - dx1 * 100, ini1.Y - dy1 * 100);
             Point bordeFin1 = new Point(ini1.X + dx1 * 100, ini1.Y + dy1 * 100);
-    
+
             graphics.DrawLine(myPen, bordeIni1, bordeFin1);
 
             // --- TRAYECTORIA AVIÓN 2 ---
             Point ini2 = new Point((int)p2.GetInitialPosition().GetX() + centro, (int)p2.GetInitialPosition().GetY() + centro);
             Point fin2 = new Point((int)p2.GetFinalPosition().GetX() + centro, (int)p2.GetFinalPosition().GetY() + centro);
-    
+
             int dx2 = fin2.X - ini2.X;
             int dy2 = fin2.Y - ini2.Y;
             Point bordeIni2 = new Point(ini2.X - dx2 * 100, ini2.Y - dy2 * 100);
             Point bordeFin2 = new Point(ini2.X + dx2 * 100, ini2.Y + dy2 * 100);
-    
+
             graphics.DrawLine(myPen, bordeIni2, bordeFin2);
 
             myPen.Dispose();
@@ -198,5 +273,38 @@ namespace InterfazGrafica
         {
 
         }
+
+        private void btnAuto_Click(object sender, EventArgs e)
+        {
+            if (p1.EstaDestino() && p2.EstaDestino())
+            {
+                MessageBox.Show("Los vuelos ya han llegado. Pulsa Reiniciar para empezar de nuevo.");
+                return;
+            }
+
+            timerSimulador.Start();
+            btnAuto.Enabled = false;      // no se puede iniciar dos veces
+            btnDetener.Enabled = true;
+            btnMover.Enabled = false;     // mientras es automática, el avance manual se desactiva
+        }
+
+        private void btnDetener_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+
+        }
+
+        private void timerSimulador_Tick(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+        //añadimos método para que el timer no siga cuado cerramos formulario y hayamos activado el automatico
+        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            timerSimulador.Stop();
+        }
+
+        
+
     }
 }
