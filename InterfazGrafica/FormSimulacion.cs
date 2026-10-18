@@ -12,6 +12,8 @@ namespace InterfazGrafica
         private PictureBox avion2;
         private Button btnMover;
         private Button btnReiniciar;
+        private double distanciaSeg;
+        private Button btnPredecir;
 
         private FlightPlan p1;
         private FlightPlan p2;
@@ -22,10 +24,11 @@ namespace InterfazGrafica
         private FlightPlanList listaVuelos;
 
         // El constructor recibe los planes de vuelo desde Form1
-        public FormSimulacion(FlightPlan plan1, FlightPlan plan2)
+        public FormSimulacion(FlightPlan plan1, FlightPlan plan2, double distancia)
         {
             this.p1 = plan1;
             this.p2 = plan2;
+            this.distanciaSeg = distancia;
             this.listaVuelos = new FlightPlanList();
             this.listaVuelos.AddFlightPlan(p1);
             this.listaVuelos.AddFlightPlan(p2);
@@ -62,6 +65,24 @@ namespace InterfazGrafica
             btnMover.TabIndex = 0;
             btnMover.Text = "Avanzar Ciclo";
             btnMover.Click += btnMover_Click;
+            //
+            //btnReiniciar
+            //
+            this.btnReiniciar = new Button();
+            this.btnReiniciar.Location = new Point(410, 425);
+            this.btnReiniciar.Size = new Size(150, 30);
+            this.btnReiniciar.Text = "Reiniciar";
+            this.btnReiniciar.Click += new EventHandler(this.btnReiniciar_Click);
+            this.Controls.Add(this.btnReiniciar);
+            //
+            //btnPredecir
+            //
+            this.btnPredecir = new Button();
+            this.btnPredecir.Location = new Point(90, 425);
+            this.btnPredecir.Size = new Size(150, 30);
+            this.btnPredecir.Text = "Predecir Conflicto";
+            this.btnPredecir.Click += new EventHandler(this.btnPredecir_Click);
+            this.Controls.Add(this.btnPredecir);
             // 
             // btnReiniciar
             // 
@@ -186,6 +207,11 @@ namespace InterfazGrafica
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
             // Obliga al panel a borrar y volver a dibujar todo (líneas, aviones y círculos) en la nueva posición
             panelEspacioAereo.Invalidate();
+            // Alarma en tiempo real
+            if (p1.Conflicto(p2, distanciaSeg))
+            {
+                MessageBox.Show("¡ALARMA! Los aviones han entrado en la distancia de seguridad.", "Alarma de Conflicto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
         private void btnReiniciar_Click(object sender, EventArgs e)
         {
@@ -198,6 +224,33 @@ namespace InterfazGrafica
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
 
             panelEspacioAereo.Invalidate();
+        }
+        private void btnPredecir_Click(object sender, EventArgs e)
+        {
+            // Creamos copias exactas para no mover los originales de la pantalla
+            FlightPlan test1 = new FlightPlan(p1.GetId(), p1.GetInitialPosition().GetX(), p1.GetInitialPosition().GetY(), p1.GetFinalPosition().GetX(), p1.GetFinalPosition().GetY(), p1.GetVelocidad());
+            FlightPlan test2 = new FlightPlan(p2.GetId(), p2.GetInitialPosition().GetX(), p2.GetInitialPosition().GetY(), p2.GetFinalPosition().GetX(), p2.GetFinalPosition().GetY(), p2.GetVelocidad());
+
+            bool habraConflicto = false;
+
+            // Simulamos ciclo a ciclo hasta que ambos lleguen al destino
+            while (!test1.EstaDestino() || !test2.EstaDestino())
+            {
+                test1.Mover(10);
+                test2.Mover(10);
+
+                if (test1.Conflicto(test2, distanciaSeg))
+                {
+                    habraConflicto = true;
+                    break;
+                }
+            }
+
+            // Mostrar el resultado de la predicción
+            if (habraConflicto)
+                MessageBox.Show("PREDICCIÓN: Sí, los aviones entrarán en conflicto en algún momento.", "Predicción", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+                MessageBox.Show("PREDICCIÓN: Ruta segura. No se detectan conflictos.", "Predicción", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         private void avion_Click(object sender, EventArgs e)
         {

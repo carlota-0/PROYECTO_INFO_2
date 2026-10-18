@@ -7,6 +7,8 @@ namespace InterfazGrafica
     {
         private FlightPlan plan1;
         private FlightPlan plan2;
+        private double distanciaSeguridad = 10; // Valor por defecto
+        private double tiempoCiclo = 10;
         public Form1()
         {
             InitializeComponent();
@@ -42,8 +44,8 @@ namespace InterfazGrafica
             if (resultado == DialogResult.OK)
             {
                 // Guardamos los parámetros
-                double distanciaSeguridad = p.DistanciaSeguridad;
-                double tiempoCiclo = p.TiempoCiclo;
+                this.distanciaSeguridad = p.DistanciaSeguridad;
+                this.tiempoCiclo = p.TiempoCiclo;
                 MessageBox.Show($"Parámetros guardados correctamente:\nDistancia de seguridad: {distanciaSeguridad}\nTiempo de ciclo: {tiempoCiclo}");
             }
         }
@@ -57,7 +59,7 @@ namespace InterfazGrafica
             }
 
             // Creamos y abrimos el nuevo formulario pasándole los dos planes de vuelo al form de simulación
-            FormSimulacion formSim = new FormSimulacion(plan1, plan2);
+            FormSimulacion formSim = new FormSimulacion(plan1, plan2, distanciaSeguridad);
             formSim.ShowDialog();
         }
     }
