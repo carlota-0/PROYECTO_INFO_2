@@ -107,6 +107,84 @@ namespace FlightLib
         }
 
         // =========================================================================
+        // FASE 11: PREDICCIÓN Y RESOLUCIÓN DE CONFLICTOS
+        // =========================================================================
+
+        // Crea una copia del vuelo (para poder simular sin tocar el vuelo real)
+        private FlightPlan Copia()
+        {
+            FlightPlan copia = new FlightPlan(id,
+                currentPosition.GetX(), currentPosition.GetY(),
+                finalPosition.GetX(), finalPosition.GetY(),
+                velocidad);
+            return copia;
+        }
+
+        // Simula el futuro con copias y devuelve true si en algún momento
+        // los dos vuelos están a menos de la distancia de seguridad
+        public bool HabraConflicto(FlightPlan b, double distanciaSeguridad, double paso)
+        {
+            FlightPlan a1 = this.Copia();
+            FlightPlan b1 = b.Copia();
+
+            // Si ya están en conflicto ahora mismo
+            if (a1.Conflicto(b1, distanciaSeguridad))
+            {
+                return true;
+            }
+
+            // Seguimos mientras algún vuelo se pueda seguir moviendo
+            while ((a1.velocidad > 0 && !a1.EstaDestino()) || (b1.velocidad > 0 && !b1.EstaDestino()))
+            {
+                a1.Mover(paso);
+                b1.Mover(paso);
+
+                if (a1.Conflicto(b1, distanciaSeguridad))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Cambia la velocidad del vuelo b hasta que no haya conflicto.
+        // Devuelve true si lo consigue y false si no hay solución.
+        public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad, double paso)
+        {
+            double velocidadOriginal = b.GetVelocidad();
+            int porcentaje;
+
+            // Primero probamos a bajar la velocidad: 95%, 90%, 85% ... 10%
+            porcentaje = 95;
+            while (porcentaje >= 10)
+            {
+                b.SetVelocidad(velocidadOriginal * porcentaje / 100);
+                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                {
+                    return true;
+                }
+                porcentaje = porcentaje - 5;
+            }
+
+            // Si no funciona, probamos a subirla: 105%, 110% ... 200%
+            porcentaje = 105;
+            while (porcentaje <= 200)
+            {
+                b.SetVelocidad(velocidadOriginal * porcentaje / 100);
+                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                {
+                    return true;
+                }
+                porcentaje = porcentaje + 5;
+            }
+
+            // No ha habido suerte: dejamos la velocidad como estaba
+            b.SetVelocidad(velocidadOriginal);
+            return false;
+        }
+
+        // =========================================================================
         // MÉTODOS AUXILIARES
         // =========================================================================
         public void EscribeConsola()

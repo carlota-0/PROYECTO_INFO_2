@@ -22,6 +22,7 @@ namespace InterfazGrafica
         private System.Windows.Forms.Timer timerSimulador;
         private System.ComponentModel.IContainer components;
         private FlightPlanList listaVuelos;
+        private double tiempoCiclo = 10;
 
         // El constructor recibe los planes de vuelo desde Form1
         public FormSimulacion(FlightPlan plan1, FlightPlan plan2, double distancia)
@@ -46,6 +47,7 @@ namespace InterfazGrafica
             btnAuto = new Button();
             btnDetener = new Button();
             timerSimulador = new System.Windows.Forms.Timer(components);
+            btnPredecir = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -53,51 +55,33 @@ namespace InterfazGrafica
             panelEspacioAereo.BackColor = Color.LightGray;
             panelEspacioAereo.Location = new Point(20, 20);
             panelEspacioAereo.Name = "panelEspacioAereo";
-            panelEspacioAereo.Size = new Size(600, 400);
+            panelEspacioAereo.Size = new Size(726, 385);
             panelEspacioAereo.TabIndex = 1;
             panelEspacioAereo.Paint += panelEspacioAereo_Paint;
             // 
             // btnMover
             // 
-            btnMover.Location = new Point(296, 430);
+            btnMover.Location = new Point(367, 464);
             btnMover.Name = "btnMover";
-            btnMover.Size = new Size(150, 30);
+            btnMover.Size = new Size(150, 46);
             btnMover.TabIndex = 0;
             btnMover.Text = "Avanzar Ciclo";
             btnMover.Click += btnMover_Click;
-            //
-            //btnReiniciar
-            //
-            this.btnReiniciar = new Button();
-            this.btnReiniciar.Location = new Point(410, 425);
-            this.btnReiniciar.Size = new Size(150, 30);
-            this.btnReiniciar.Text = "Reiniciar";
-            this.btnReiniciar.Click += new EventHandler(this.btnReiniciar_Click);
-            this.Controls.Add(this.btnReiniciar);
-            //
-            //btnPredecir
-            //
-            this.btnPredecir = new Button();
-            this.btnPredecir.Location = new Point(90, 425);
-            this.btnPredecir.Size = new Size(150, 30);
-            this.btnPredecir.Text = "Predecir Conflicto";
-            this.btnPredecir.Click += new EventHandler(this.btnPredecir_Click);
-            this.Controls.Add(this.btnPredecir);
             // 
             // btnReiniciar
             // 
-            btnReiniciar.Location = new Point(470, 432);
+            btnReiniciar.Location = new Point(570, 466);
             btnReiniciar.Name = "btnReiniciar";
-            btnReiniciar.Size = new Size(150, 30);
+            btnReiniciar.Size = new Size(150, 44);
             btnReiniciar.TabIndex = 0;
             btnReiniciar.Text = "Reiniciar";
             btnReiniciar.Click += btnReiniciar_Click;
             // 
             // btnAuto
             // 
-            btnAuto.Location = new Point(20, 430);
+            btnAuto.Location = new Point(20, 464);
             btnAuto.Name = "btnAuto";
-            btnAuto.Size = new Size(123, 34);
+            btnAuto.Size = new Size(171, 46);
             btnAuto.TabIndex = 2;
             btnAuto.Text = "Automático";
             btnAuto.UseVisualStyleBackColor = true;
@@ -106,9 +90,9 @@ namespace InterfazGrafica
             // btnDetener
             // 
             btnDetener.Enabled = false;
-            btnDetener.Location = new Point(161, 432);
+            btnDetener.Location = new Point(223, 463);
             btnDetener.Name = "btnDetener";
-            btnDetener.Size = new Size(112, 34);
+            btnDetener.Size = new Size(112, 44);
             btnDetener.TabIndex = 3;
             btnDetener.Text = "Detener";
             btnDetener.UseVisualStyleBackColor = true;
@@ -119,9 +103,19 @@ namespace InterfazGrafica
             timerSimulador.Interval = 500;
             timerSimulador.Tick += timerSimulador_Tick;
             // 
+            // btnPredecir
+            // 
+            btnPredecir.Location = new Point(223, 550);
+            btnPredecir.Name = "btnPredecir";
+            btnPredecir.Size = new Size(218, 81);
+            btnPredecir.TabIndex = 1;
+            btnPredecir.Text = "Predecir Conflicto";
+            btnPredecir.Click += btnPredecir_Click;
+            // 
             // FormSimulacion
             // 
-            ClientSize = new Size(650, 480);
+            ClientSize = new Size(1270, 765);
+            Controls.Add(btnPredecir);
             Controls.Add(btnDetener);
             Controls.Add(btnAuto);
             Controls.Add(btnReiniciar);
@@ -129,8 +123,7 @@ namespace InterfazGrafica
             Controls.Add(panelEspacioAereo);
             Name = "FormSimulacion";
             Text = "Simulación del Espacio Aéreo";
-            FormClosing += FormSimulacion_FormClosing;
-            Load += FormSimulacion_Load;
+            FormClosing += FormSimulacion_FormClosing; 
             ResumeLayout(false);
         }
 
@@ -161,8 +154,6 @@ namespace InterfazGrafica
 
         private void AvanzarCiclo()
         {
-
-            double tiempoCiclo = 10;
 
             // Movemos todos los aviones de la lista a la vez
             listaVuelos.Mover(tiempoCiclo);
@@ -196,8 +187,7 @@ namespace InterfazGrafica
 
         private void btnMover_Click(object sender, EventArgs e)
         {
-            // Usamos 10 como tiempo de ciclo por defecto (como en SimulatorConsole)
-            double tiempoCiclo = 10;
+
 
             // Movemos todos los aviones de la lista a la vez
             listaVuelos.Mover(tiempoCiclo);
@@ -322,10 +312,6 @@ namespace InterfazGrafica
             penSeguridad.Dispose();
         }
 
-        private void FormSimulacion_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnAuto_Click(object sender, EventArgs e)
         {
@@ -335,10 +321,38 @@ namespace InterfazGrafica
                 return;
             }
 
+            // FASE 11: antes de empezar, comprobamos si habrá conflicto
+            if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
+            {
+                DialogResult respuesta = MessageBox.Show(
+                    "Los vuelos entrarán en conflicto. ¿Quieres resolverlo cambiando la velocidad de un vuelo?",
+                    "Conflicto detectado",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (respuesta == DialogResult.Yes)
+                {
+                    double velocidadAntes = p2.GetVelocidad();
+
+                    if (p1.ResolverConflicto(p2, distanciaSeg, tiempoCiclo))
+                    {
+                        MessageBox.Show("Conflicto resuelto. La velocidad de " + p2.GetId() +
+                            " ha cambiado de " + velocidadAntes.ToString("F2") +
+                            " a " + p2.GetVelocidad().ToString("F2"));
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se ha encontrado ninguna velocidad que evite el conflicto. La simulación continúa sin cambios.");
+                    }
+                }
+                // Si responde que No, no hacemos nada y la simulación sigue como siempre
+            }
+
+            // A partir de aquí es lo mismo que tenías
             timerSimulador.Start();
-            btnAuto.Enabled = false;      // no se puede iniciar dos veces
+            btnAuto.Enabled = false;
             btnDetener.Enabled = true;
-            btnMover.Enabled = false;     // mientras es automática, el avance manual se desactiva
+            btnMover.Enabled = false;
         }
 
         private void btnDetener_Click(object sender, EventArgs e)
