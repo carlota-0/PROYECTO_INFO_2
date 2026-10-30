@@ -122,30 +122,56 @@ namespace FlightLib
 
         // Simula el futuro con copias y devuelve true si en algún momento
         // los dos vuelos están a menos de la distancia de seguridad
+        // Simula el futuro matemáticamente (método de la derivada)
         public bool HabraConflicto(FlightPlan b, double distanciaSeguridad, double paso)
         {
-            FlightPlan a1 = this.Copia();
-            FlightPlan b1 = b.Copia();
-
-            // Si ya están en conflicto ahora mismo
-            if (a1.Conflicto(b1, distanciaSeguridad))
-            {
+            // Si ya están en conflicto ahora mismo, devolvemos true
+            if (this.Conflicto(b, distanciaSeguridad))
                 return true;
-            }
 
-            // Seguimos mientras algún vuelo se pueda seguir moviendo
-            while ((a1.velocidad > 0 && !a1.EstaDestino()) || (b1.velocidad > 0 && !b1.EstaDestino()))
-            {
-                a1.Mover(paso);
-                b1.Mover(paso);
+            // 1. Calculamos las componentes vectoriales (Vx, Vy) del Avión A (this)
+            double dxA = finalPosition.GetX() - currentPosition.GetX();
+            double dyA = finalPosition.GetY() - currentPosition.GetY();
+            double hipA = Math.Sqrt(dxA * dxA + dyA * dyA);
+            double vxA = (hipA > 0) ? (dxA / hipA) * velocidad : 0;
+            double vyA = (hipA > 0) ? (dyA / hipA) * velocidad : 0;
 
-                if (a1.Conflicto(b1, distanciaSeguridad))
-                {
-                    return true;
-                }
-            }
+            // 2. Calculamos las componentes vectoriales (Vx, Vy) del Avión B
+            double dxB = b.GetFinalPosition().GetX() - b.GetCurrentPosition().GetX();
+            double dyB = b.GetFinalPosition().GetY() - b.GetCurrentPosition().GetY();
+            double hipB = Math.Sqrt(dxB * dxB + dyB * dyB);
+            double vxB = (hipB > 0) ? (dxB / hipB) * b.GetVelocidad() : 0;
+            double vyB = (hipB > 0) ? (dyB / hipB) * b.GetVelocidad() : 0;
 
-            return false;
+            // 3. Diferencias de posición y velocidad (A - B)
+            double dX0 = currentPosition.GetX() - b.GetCurrentPosition().GetX();
+            double dY0 = currentPosition.GetY() - b.GetCurrentPosition().GetY();
+            double dVx = vxA - vxB;
+            double dVy = vyA - vyB;
+
+            // 4. Derivada de la distancia igualada a cero (para hallar el tiempo mínimo)
+            // Fórmula: t_min = -(dX0*dVx + dY0*dVy) / (dVx^2 + dVy^2)
+            double denom = (dVx * dVx) + (dVy * dVy);
+
+            // Si el denominador es 0, van a la misma velocidad y dirección (nunca se cruzan)
+            if (denom == 0) return false;
+
+            double t_min = -(dX0 * dVx + dY0 * dVy) / denom;
+
+            // Si el tiempo es negativo, el punto de máximo acercamiento ocurrió en el pasado
+            if (t_min < 0) return false;
+
+            // 5. Calculamos la distancia mínima que habrá en ese instante t_min
+            double distX_min = dX0 + dVx * t_min;
+            double distY_min = dY0 + dVy * t_min;
+            
+            // Calculamos la distancia al cuadrado para ahorrar un Math.Sqrt()
+            double distanciaMinimaAlCuadrado = (distX_min * distX_min) + (distY_min * distY_min);
+
+            // Nota sobre el punto 3: Si el profesor considera "distancia de seguridad" 
+            // como el radio de un solo avión, aquí deberías compararlo con (2 * distanciaSeguridad) al cuadrado.
+            // Si es la separación total requerida, lo dejamos así:
+            return distanciaMinimaAlCuadrado < (distanciaSeguridad * distanciaSeguridad);
         }
 
         // Cambia la velocidad del vuelo b hasta que no haya conflicto.
