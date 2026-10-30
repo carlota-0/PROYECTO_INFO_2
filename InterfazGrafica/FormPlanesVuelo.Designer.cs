@@ -46,7 +46,6 @@
             btnAceptar = new Button();
             btnCancelar = new Button();
             btnDefecto = new Button();
-            this.Controls.Add(btnDefecto);
             SuspendLayout();
             // 
             // Vuelo1
@@ -161,7 +160,7 @@
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(181, 247);
+            btnAceptar.Location = new Point(297, 247);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(112, 34);
             btnAceptar.TabIndex = 14;
@@ -171,27 +170,28 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(367, 247);
+            btnCancelar.Location = new Point(444, 247);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(112, 34);
             btnCancelar.TabIndex = 15;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
-            //
+            // 
             // btnDefecto
-            //
-           
-            btnDefecto.Location = new Point(57, 247); // Lo ponemos a la izquierda
+            // 
+            btnDefecto.Location = new Point(147, 247);
+            btnDefecto.Name = "btnDefecto";
             btnDefecto.Size = new Size(112, 34);
+            btnDefecto.TabIndex = 0;
             btnDefecto.Text = "Por defecto";
             btnDefecto.Click += btnDefecto_Click;
-            
             // 
             // FormPlanesVuelo
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(702, 334);
+            Controls.Add(btnDefecto);
             Controls.Add(btnCancelar);
             Controls.Add(btnAceptar);
             Controls.Add(Ini1);

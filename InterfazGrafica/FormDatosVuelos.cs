@@ -9,6 +9,9 @@ namespace InterfazGrafica
     {
         private DataGridView dgvVuelos;
         private FlightPlan p1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private FlightPlan p2;
 
         public FormDatosVuelos(FlightPlan p1, FlightPlan p2)
@@ -21,29 +24,51 @@ namespace InterfazGrafica
 
         private void InitializeComponent()
         {
-            this.dgvVuelos = new DataGridView();
-            this.SuspendLayout();
-            
-            // Configuración visual de la tabla
-            this.dgvVuelos.Location = new Point(20, 20);
-            this.dgvVuelos.Size = new Size(450, 150);
-            this.dgvVuelos.AllowUserToAddRows = false; 
-            this.dgvVuelos.RowHeadersVisible = false;
-
-            // Creamos las columnas
-            this.dgvVuelos.ColumnCount = 3;
-            this.dgvVuelos.Columns[0].Name = "ID";
-            this.dgvVuelos.Columns[1].Name = "Velocidad";
-            this.dgvVuelos.Columns[2].Name = "Posición Actual";
-            this.dgvVuelos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            
-            // Asignamos el evento de clic en la celda
-            this.dgvVuelos.CellClick += new DataGridViewCellEventHandler(this.dgvVuelos_CellClick);
-
-            this.ClientSize = new Size(500, 200);
-            this.Controls.Add(this.dgvVuelos);
-            this.Text = "Datos de Vuelos";
-            this.ResumeLayout(false);
+            dgvVuelos = new DataGridView();
+            dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
+            dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)dgvVuelos).BeginInit();
+            SuspendLayout();
+            // 
+            // dgvVuelos
+            // 
+            dgvVuelos.AllowUserToAddRows = false;
+            dgvVuelos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvVuelos.ColumnHeadersHeight = 34;
+            dgvVuelos.Columns.AddRange(new DataGridViewColumn[] { dataGridViewTextBoxColumn1, dataGridViewTextBoxColumn2, dataGridViewTextBoxColumn3 });
+            dgvVuelos.Location = new Point(20, 20);
+            dgvVuelos.Name = "dgvVuelos";
+            dgvVuelos.RowHeadersVisible = false;
+            dgvVuelos.RowHeadersWidth = 62;
+            dgvVuelos.Size = new Size(450, 150);
+            dgvVuelos.TabIndex = 0;
+            dgvVuelos.CellClick += dgvVuelos_CellClick;
+            // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewTextBoxColumn1.MinimumWidth = 8;
+            dataGridViewTextBoxColumn1.Name = "ID";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            dataGridViewTextBoxColumn2.MinimumWidth = 8;
+            dataGridViewTextBoxColumn2.Name = "Velocidad";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            dataGridViewTextBoxColumn3.MinimumWidth = 8;
+            dataGridViewTextBoxColumn3.Name = "Posición";
+            // 
+            // FormDatosVuelos
+            // 
+            ClientSize = new Size(500, 200);
+            Controls.Add(dgvVuelos);
+            Name = "FormDatosVuelos";
+            Text = "Datos de Vuelos";
+            Load += FormDatosVuelos_Load;
+            ((System.ComponentModel.ISupportInitialize)dgvVuelos).EndInit();
+            ResumeLayout(false);
         }
 
         private void CargarDatos()
@@ -62,6 +87,11 @@ namespace InterfazGrafica
                 double distancia = p1.Distancia(p2);
                 MessageBox.Show($"La distancia actual entre el vuelo {p1.GetId()} y el vuelo {p2.GetId()} es de {distancia:F2} unidades.", "Distancia entre vuelos", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void FormDatosVuelos_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

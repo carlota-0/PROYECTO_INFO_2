@@ -49,6 +49,7 @@ namespace InterfazGrafica
             btnDetener = new Button();
             timerSimulador = new System.Windows.Forms.Timer(components);
             btnPredecir = new Button();
+            btnDatos = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -56,13 +57,13 @@ namespace InterfazGrafica
             panelEspacioAereo.BackColor = Color.LightGray;
             panelEspacioAereo.Location = new Point(20, 20);
             panelEspacioAereo.Name = "panelEspacioAereo";
-            panelEspacioAereo.Size = new Size(726, 385);
+            panelEspacioAereo.Size = new Size(738, 405);
             panelEspacioAereo.TabIndex = 1;
             panelEspacioAereo.Paint += panelEspacioAereo_Paint;
             // 
             // btnMover
             // 
-            btnMover.Location = new Point(367, 464);
+            btnMover.Location = new Point(552, 449);
             btnMover.Name = "btnMover";
             btnMover.Size = new Size(150, 46);
             btnMover.TabIndex = 0;
@@ -71,16 +72,16 @@ namespace InterfazGrafica
             // 
             // btnReiniciar
             // 
-            btnReiniciar.Location = new Point(570, 466);
+            btnReiniciar.Location = new Point(782, 170);
             btnReiniciar.Name = "btnReiniciar";
-            btnReiniciar.Size = new Size(150, 44);
+            btnReiniciar.Size = new Size(150, 48);
             btnReiniciar.TabIndex = 0;
             btnReiniciar.Text = "Reiniciar";
             btnReiniciar.Click += btnReiniciar_Click;
             // 
             // btnAuto
             // 
-            btnAuto.Location = new Point(20, 464);
+            btnAuto.Location = new Point(85, 449);
             btnAuto.Name = "btnAuto";
             btnAuto.Size = new Size(171, 46);
             btnAuto.TabIndex = 2;
@@ -91,7 +92,7 @@ namespace InterfazGrafica
             // btnDetener
             // 
             btnDetener.Enabled = false;
-            btnDetener.Location = new Point(223, 463);
+            btnDetener.Location = new Point(345, 449);
             btnDetener.Name = "btnDetener";
             btnDetener.Size = new Size(112, 44);
             btnDetener.TabIndex = 3;
@@ -106,28 +107,26 @@ namespace InterfazGrafica
             // 
             // btnPredecir
             // 
-            btnPredecir.Location = new Point(223, 550);
+            btnPredecir.Location = new Point(782, 91);
             btnPredecir.Name = "btnPredecir";
-            btnPredecir.Size = new Size(218, 81);
+            btnPredecir.Size = new Size(196, 55);
             btnPredecir.TabIndex = 1;
             btnPredecir.Text = "Predecir Conflicto";
             btnPredecir.Click += btnPredecir_Click;
-            //
-            //btn Datos Vuelo
-            //
-            this.btnDatos = new Button();
-            this.btnDatos.Location = new Point(250, 460); // Justo debajo del botón Mover
-            this.btnDatos.Size = new Size(150, 30);
-            this.btnDatos.Text = "Mostrar Datos";
-            this.btnDatos.Click += new EventHandler(this.btnDatos_Click);
-            this.Controls.Add(this.btnDatos);
-
-// Aumentamos un pelín el alto total de la ventana para que quepa este nuevo botón
-            this.ClientSize = new Size(650, 510);
+            // 
+            // btnDatos
+            // 
+            btnDatos.Location = new Point(782, 20);
+            btnDatos.Name = "btnDatos";
+            btnDatos.Size = new Size(150, 46);
+            btnDatos.TabIndex = 0;
+            btnDatos.Text = "Mostrar Datos";
+            btnDatos.Click += btnDatos_Click;
             // 
             // FormSimulacion
             // 
             ClientSize = new Size(1270, 765);
+            Controls.Add(btnDatos);
             Controls.Add(btnPredecir);
             Controls.Add(btnDetener);
             Controls.Add(btnAuto);
@@ -136,7 +135,8 @@ namespace InterfazGrafica
             Controls.Add(panelEspacioAereo);
             Name = "FormSimulacion";
             Text = "Simulación del Espacio Aéreo";
-            FormClosing += FormSimulacion_FormClosing; 
+            FormClosing += FormSimulacion_FormClosing;
+            Load += FormSimulacion_Load;
             ResumeLayout(false);
         }
 
@@ -317,6 +317,8 @@ namespace InterfazGrafica
             penSeguridad.Dispose();
         }
         
+
+        //FASE 8: Boton para realizar simulacion automatica
         private void btnAuto_Click(object sender, EventArgs e)
         {
             if (p1.EstaDestino() && p2.EstaDestino())
@@ -364,7 +366,7 @@ namespace InterfazGrafica
             PararAutomatica();
 
         }
-        
+
         private void btnDatos_Click(object sender, EventArgs e)
         {
             FormDatosVuelos formDatos = new FormDatosVuelos(p1, p2);
@@ -380,10 +382,10 @@ namespace InterfazGrafica
         {
             timerSimulador.Stop();
         }
-        
-        
 
-        
+        private void FormSimulacion_Load(object sender, EventArgs e)
+        {
 
+        }
     }
 }
