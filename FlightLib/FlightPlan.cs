@@ -61,12 +61,7 @@ namespace FlightLib
         // Mueve el avión según el tiempo introducido
         public void Mover(double tiempo)
         {
-            // Si ya ha llegado, no se mueve más
-            if ((currentPosition.GetX() == finalPosition.GetX() &&
-                    currentPosition.GetY() == finalPosition.GetY()))
-            {
-                return;
-            }
+           
 
             //Calculamos la distancia recorrida en el tiempo dado
             double distancia = tiempo * this.velocidad / 60;
@@ -100,15 +95,15 @@ namespace FlightLib
             return this.currentPosition.Distancia(b.GetCurrentPosition());
         }
 
+        //FASE 10
         // Comprueba si hay peligro de colisión con otro avión según la distancia de seguridad
         public bool Conflicto(FlightPlan b, double distanciaSeguridad)
         {
-            return (this.Distancia(b) < distanciaSeguridad);
+            return (this.Distancia(b) < distanciaSeguridad*2);
         }
 
-        // =========================================================================
-        // FASE 11: PREDICCIÓN Y RESOLUCIÓN DE CONFLICTOS
-        // =========================================================================
+        
+        //FASE 10
 
         // Crea una copia del vuelo (para poder simular sin tocar el vuelo real)
         private FlightPlan Copia()
@@ -175,7 +170,8 @@ namespace FlightLib
             return distanciaMinimaAlCuadrado < (distanciaSeguridad * distanciaSeguridad);
         }
 
-        // Cambia la velocidad del vuelo b hasta que no haya conflicto.
+        //FASE 11
+        //Cambia la velocidad del vuelo b hasta que no haya conflicto.
         // Devuelve true si lo consigue y false si no hay solución.
         public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad, double paso)
         {

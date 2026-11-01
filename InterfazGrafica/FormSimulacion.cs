@@ -24,6 +24,13 @@ namespace InterfazGrafica
         private System.ComponentModel.IContainer components;
         private FlightPlanList listaVuelos;
         private double tiempoCiclo = 10;
+        private Label lblEstadoAlarma;
+        private Label lblVuelo1;
+        private Label lblVuelo2;
+        private TextBox txtVel1;
+        private TextBox txtVel2;
+        private Button btnAplicarVel;
+
 
         // El constructor recibe los planes de vuelo desde Form1
         public FormSimulacion(FlightPlan plan1, FlightPlan plan2, double distancia)
@@ -50,6 +57,12 @@ namespace InterfazGrafica
             timerSimulador = new System.Windows.Forms.Timer(components);
             btnPredecir = new Button();
             btnDatos = new Button();
+            lblEstadoAlarma = new Label();
+            lblVuelo1 = new Label();
+            lblVuelo2 = new Label();
+            txtVel1 = new TextBox();
+            txtVel2 = new TextBox();
+            btnAplicarVel = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -63,7 +76,7 @@ namespace InterfazGrafica
             // 
             // btnMover
             // 
-            btnMover.Location = new Point(552, 449);
+            btnMover.Location = new Point(555, 484);
             btnMover.Name = "btnMover";
             btnMover.Size = new Size(150, 46);
             btnMover.TabIndex = 0;
@@ -81,7 +94,7 @@ namespace InterfazGrafica
             // 
             // btnAuto
             // 
-            btnAuto.Location = new Point(85, 449);
+            btnAuto.Location = new Point(78, 486);
             btnAuto.Name = "btnAuto";
             btnAuto.Size = new Size(171, 46);
             btnAuto.TabIndex = 2;
@@ -92,7 +105,7 @@ namespace InterfazGrafica
             // btnDetener
             // 
             btnDetener.Enabled = false;
-            btnDetener.Location = new Point(345, 449);
+            btnDetener.Location = new Point(331, 486);
             btnDetener.Name = "btnDetener";
             btnDetener.Size = new Size(112, 44);
             btnDetener.TabIndex = 3;
@@ -107,9 +120,9 @@ namespace InterfazGrafica
             // 
             // btnPredecir
             // 
-            btnPredecir.Location = new Point(782, 91);
+            btnPredecir.Location = new Point(782, 94);
             btnPredecir.Name = "btnPredecir";
-            btnPredecir.Size = new Size(196, 55);
+            btnPredecir.Size = new Size(150, 54);
             btnPredecir.TabIndex = 1;
             btnPredecir.Text = "Predecir Conflicto";
             btnPredecir.Click += btnPredecir_Click;
@@ -123,9 +136,49 @@ namespace InterfazGrafica
             btnDatos.Text = "Mostrar Datos";
             btnDatos.Click += btnDatos_Click;
             // 
+            // lblEstadoAlarma
+            // 
+            lblEstadoAlarma.BackColor = Color.Green;
+            lblEstadoAlarma.Font = new Font("Arial", 10F, FontStyle.Bold);
+            lblEstadoAlarma.ForeColor = Color.White;
+            lblEstadoAlarma.Location = new Point(20, 435);
+            lblEstadoAlarma.Name = "lblEstadoAlarma";
+            lblEstadoAlarma.Size = new Size(738, 30);
+            lblEstadoAlarma.TabIndex = 0;
+            lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
+            lblEstadoAlarma.TextAlign = ContentAlignment.MiddleCenter;
+
+            // lblVuelo1
+            lblVuelo1.AutoSize = true;
+            lblVuelo1.Font = new Font("Segoe UI", 12F);
+            lblVuelo1.Location = new Point(782, 262);
+            lblVuelo1.Text = p1.GetId() + ":";
+            // txtVel1
+            txtVel1.Font = new Font("Segoe UI", 12F);
+            txtVel1.Location = new Point(930, 255);
+            txtVel1.Size = new Size(100, 35);
+            txtVel1.Text = p1.GetVelocidad().ToString();
+            // lblVuelo2
+            lblVuelo2.AutoSize = true;
+            lblVuelo2.Font = new Font("Segoe UI", 12F);
+            lblVuelo2.Location = new Point(782, 322);
+            lblVuelo2.Text = p2.GetId() + ":";
+            // txtVel2
+            txtVel2.Font = new Font("Segoe UI", 12F);
+            txtVel2.Location = new Point(930, 315);
+            txtVel2.Size = new Size(100, 35);
+            txtVel2.Text = p2.GetVelocidad().ToString();
+            // btnAplicarVel
+            btnAplicarVel.Location = new Point(782, 380);
+            btnAplicarVel.Size = new Size(300, 45);
+            btnAplicarVel.Text = "Cambiar velocidades y reiniciar";
+            btnAplicarVel.UseVisualStyleBackColor = true;
+            btnAplicarVel.Click += btnAplicarVel_Click;
+            // 
             // FormSimulacion
             // 
             ClientSize = new Size(1270, 765);
+            Controls.Add(lblEstadoAlarma);
             Controls.Add(btnDatos);
             Controls.Add(btnPredecir);
             Controls.Add(btnDetener);
@@ -133,12 +186,24 @@ namespace InterfazGrafica
             Controls.Add(btnReiniciar);
             Controls.Add(btnMover);
             Controls.Add(panelEspacioAereo);
+
+            Controls.Add(lblVuelo1);
+            Controls.Add(txtVel1);
+            Controls.Add(lblVuelo2);
+            Controls.Add(txtVel2);
+            Controls.Add(btnAplicarVel);
+
             Name = "FormSimulacion";
             Text = "Simulación del Espacio Aéreo";
             FormClosing += FormSimulacion_FormClosing;
             Load += FormSimulacion_Load;
             ResumeLayout(false);
+
+      
+
         }
+
+
 
         private void ConfigurarAviones()
         {
@@ -175,6 +240,17 @@ namespace InterfazGrafica
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
             // Hacemos que panel borre todo y lo vuelva a dibujar
             panelEspacioAereo.Invalidate();
+            //para estado alarma!!!
+            if (p1.Conflicto(p2, distanciaSeg))
+            {
+                lblEstadoAlarma.Text = "¡ALARMA: PÉRDIDA DE SEPARACIÓN ENTRE VUELOS!";
+                lblEstadoAlarma.BackColor = Color.Red;
+            }
+            else
+            {
+                lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
+                lblEstadoAlarma.BackColor = Color.Green;
+            }
 
             // Si activamoss simulación automática y los dos han llegado se paran los dos
             if (timerSimulador.Enabled && p1.EstaDestino() && p2.EstaDestino())
@@ -192,61 +268,63 @@ namespace InterfazGrafica
         }
         private void btnMover_Click(object sender, EventArgs e)
         {
-
-
-            // Movemos todos los aviones de la lista a la vez
-            listaVuelos.Mover(tiempoCiclo);
-
-            // Actualizamos la posición visual en el panel
-            avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
-            avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
-            // Obliga al panel a borrar y volver a dibujar todo (líneas, aviones y círculos) en la nueva posición
-            panelEspacioAereo.Invalidate();
-            // Alarma en tiempo real
-            if (p1.Conflicto(p2, distanciaSeg))
-            {
-                MessageBox.Show("¡ALARMA! Los aviones han entrado en la distancia de seguridad.", "Alarma de Conflicto", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+            AvanzarCiclo();
         }
-        private void btnReiniciar_Click(object sender, EventArgs e)
+        /////COSAS VERSION 1/////
+        private void ReiniciarSimulacion()
         {
-            // Reiniciamos las coordenadas lógicas
             p1.Restart();
             p2.Restart();
 
-            // Actualizamos visualmente
             avion1.Location = new Point((int)p1.GetCurrentPosition().GetX(), (int)p1.GetCurrentPosition().GetY());
             avion2.Location = new Point((int)p2.GetCurrentPosition().GetX(), (int)p2.GetCurrentPosition().GetY());
 
             panelEspacioAereo.Invalidate();
+            lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
+            lblEstadoAlarma.BackColor = Color.Green;
         }
-        private void btnPredecir_Click(object sender, EventArgs e)
+
+        private void btnReiniciar_Click(object sender, EventArgs e)
         {
-            // Creamos copias exactas para no mover los originales de la pantalla
-            FlightPlan test1 = new FlightPlan(p1.GetId(), p1.GetInitialPosition().GetX(), p1.GetInitialPosition().GetY(), p1.GetFinalPosition().GetX(), p1.GetFinalPosition().GetY(), p1.GetVelocidad());
-            FlightPlan test2 = new FlightPlan(p2.GetId(), p2.GetInitialPosition().GetX(), p2.GetInitialPosition().GetY(), p2.GetFinalPosition().GetX(), p2.GetFinalPosition().GetY(), p2.GetVelocidad());
+            ReiniciarSimulacion();
+        }
+        private void btnAplicarVel_Click(object sender, EventArgs e)
+        {
+            double v1, v2;
 
-            bool habraConflicto = false;
-
-            // Simulamos ciclo a ciclo hasta que ambos lleguen al destino
-            while (!test1.EstaDestino() || !test2.EstaDestino())
+            try
             {
-                test1.Mover(10);
-                test2.Mover(10);
-
-                if (test1.Conflicto(test2, distanciaSeg))
-                {
-                    habraConflicto = true;
-                    break;
-                }
+                v1 = Convert.ToDouble(txtVel1.Text);
+                v2 = Convert.ToDouble(txtVel2.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Escribe números válidos en las velocidades");
+                return;
             }
 
-            // Mostrar el resultado de la predicción
-            if (habraConflicto)
-                MessageBox.Show("PREDICCIÓN: Sí, los aviones entrarán en conflicto en algún momento.", "Predicción", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (v1 <= 0 || v2 <= 0)
+            {
+                MessageBox.Show("Las velocidades deben ser mayores que 0");
+                return;
+            }
+
+            PararAutomatica();
+
+            p1.SetVelocidad(v1);
+            p2.SetVelocidad(v2);
+
+            ReiniciarSimulacion();
+
+            if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
+                MessageBox.Show("Con las nuevas velocidades sigue habiendo conflicto.");
             else
-                MessageBox.Show("PREDICCIÓN: Ruta segura. No se detectan conflictos.", "Predicción", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Con las nuevas velocidades no habrá conflicto.");
         }
+        
+        ///COSAS VERSION 1///
+
+        //FASE 5: CONsultamos info al hacer clic en un avion
         private void avion_Click(object sender, EventArgs e)
         {
             // Recuperamos el PictureBox que ha sido clicado
@@ -267,6 +345,10 @@ namespace InterfazGrafica
             Graphics graphics = e.Graphics;
             Pen myPen = new Pen(Color.Black);
 
+            //AÑADIMOS ETIQUETA
+            Font fontID = new Font("Arial", 9, FontStyle.Bold);
+            Brush brushID = Brushes.Black;
+            //-----------------
             // Como los aviones miden 20x20, sumamos 10 para apuntar al centro
             int centro = 10;
 
@@ -296,7 +378,7 @@ namespace InterfazGrafica
             myPen.Dispose();
             // --- FASE 7: DISTANCIA DE SEGURIDAD ---
             // Usaremos un radio de 40 píxeles como representación visual
-            int radioSeguridad = 40;
+            int radioSeguridad = (int)this.distanciaSeg;
             // Como definimos que los aviones miden 20x20, su centro está a 10 píxeles
             int mitadAvion = 10;
 
@@ -308,12 +390,15 @@ namespace InterfazGrafica
             int centroY1 = avion1.Location.Y + mitadAvion;
             // Se resta el radio para que el centro del círculo coincida con el centro del avión
             graphics.DrawEllipse(penSeguridad, centroX1 - radioSeguridad, centroY1 - radioSeguridad, radioSeguridad * 2, radioSeguridad * 2);
-
+            
+            // ETIQUETA ID VUELO 1 (Se dibuja 22px a la derecha del avión)
+            graphics.DrawString(p1.GetId(), fontID, brushID, avion1.Location.X + 22, avion1.Location.Y - 5);
             // Centro exacto del Avión 2 y dibujo de su elipse
             int centroX2 = avion2.Location.X + mitadAvion;
             int centroY2 = avion2.Location.Y + mitadAvion;
             graphics.DrawEllipse(penSeguridad, centroX2 - radioSeguridad, centroY2 - radioSeguridad, radioSeguridad * 2, radioSeguridad * 2);
-
+            // ETIQUETA ID VUELO 2
+            graphics.DrawString(p2.GetId(), fontID, brushID, avion2.Location.X + 22, avion2.Location.Y - 5);
             penSeguridad.Dispose();
         }
         
@@ -342,6 +427,8 @@ namespace InterfazGrafica
 
                     if (p1.ResolverConflicto(p2, distanciaSeg, tiempoCiclo))
                     {
+                        txtVel1.Text = p1.GetVelocidad().ToString();
+                        txtVel2.Text = p2.GetVelocidad().ToString();
                         MessageBox.Show("Conflicto resuelto. La velocidad de " + p2.GetId() +
                             " ha cambiado de " + velocidadAntes.ToString("F2") +
                             " a " + p2.GetVelocidad().ToString("F2"));
@@ -354,28 +441,38 @@ namespace InterfazGrafica
                 // Si responde que No, no hacemos nada y la simulación sigue como siempre
             }
 
-            // A partir de aquí es lo mismo que tenías
+            //Iniciamos automatico
             timerSimulador.Start();
             btnAuto.Enabled = false;
             btnDetener.Enabled = true;
             btnMover.Enabled = false;
         }
 
+        //FASE 8: Boton detener
         private void btnDetener_Click(object sender, EventArgs e)
         {
             PararAutomatica();
 
         }
-
+        private void timerSimulador_Tick(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+        //FASE 9: Abre formulario con los datos de los aviones
         private void btnDatos_Click(object sender, EventArgs e)
         {
             FormDatosVuelos formDatos = new FormDatosVuelos(p1, p2);
             formDatos.ShowDialog();
         }
 
-        private void timerSimulador_Tick(object sender, EventArgs e)
+
+        //FASE 10
+        private void btnPredecir_Click(object sender, EventArgs e)
         {
-            AvanzarCiclo();
+            if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
+                MessageBox.Show("Se producirá un conflicto entre los vuelos.", "Predicción");
+            else
+                MessageBox.Show("No se producirá ningún conflicto.", "Predicción");
         }
         //añadimos método para que el timer no siga cuado cerramos formulario y hayamos activado el automatico
         private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
