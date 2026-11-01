@@ -125,6 +125,7 @@ namespace FlightLib
         // Simula el futuro matemáticamente (método de la derivada)
         public bool HabraConflicto(FlightPlan b, double distanciaSeguridad, double paso)
         {
+            
             // Si ya están en conflicto ahora mismo, devolvemos true
             if (this.Conflicto(b, distanciaSeguridad))
                 return true;
