@@ -70,7 +70,6 @@
             // 
             // menuSimulacion
             // 
-            
             menuSimulacion.Name = "menuSimulacion";
             menuSimulacion.Size = new Size(320, 34);
             menuSimulacion.Text = "Iniciar simulación";
@@ -85,6 +84,7 @@
             MainMenuStrip = menuStrip1;
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);

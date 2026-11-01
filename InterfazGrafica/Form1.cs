@@ -62,5 +62,10 @@ namespace InterfazGrafica
             FormSimulacion formSim = new FormSimulacion(plan1, plan2, distanciaSeguridad);
             formSim.ShowDialog();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace InterfazGrafica
         private Label lblVuelo2;
         private TextBox txtVel1;
         private TextBox txtVel2;
+        private Label label1;
+        private Label label2;
         private Button btnAplicarVel;
 
 
@@ -63,6 +65,8 @@ namespace InterfazGrafica
             txtVel1 = new TextBox();
             txtVel2 = new TextBox();
             btnAplicarVel = new Button();
+            label1 = new Label();
+            label2 = new Label();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -120,9 +124,9 @@ namespace InterfazGrafica
             // 
             // btnPredecir
             // 
-            btnPredecir.Location = new Point(782, 94);
+            btnPredecir.Location = new Point(782, 83);
             btnPredecir.Name = "btnPredecir";
-            btnPredecir.Size = new Size(150, 54);
+            btnPredecir.Size = new Size(150, 70);
             btnPredecir.TabIndex = 1;
             btnPredecir.Text = "Predecir Conflicto";
             btnPredecir.Click += btnPredecir_Click;
@@ -147,37 +151,74 @@ namespace InterfazGrafica
             lblEstadoAlarma.TabIndex = 0;
             lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
             lblEstadoAlarma.TextAlign = ContentAlignment.MiddleCenter;
-
+            // 
             // lblVuelo1
+            // 
             lblVuelo1.AutoSize = true;
             lblVuelo1.Font = new Font("Segoe UI", 12F);
             lblVuelo1.Location = new Point(782, 262);
-            lblVuelo1.Text = p1.GetId() + ":";
-            // txtVel1
-            txtVel1.Font = new Font("Segoe UI", 12F);
-            txtVel1.Location = new Point(930, 255);
-            txtVel1.Size = new Size(100, 35);
-            txtVel1.Text = p1.GetVelocidad().ToString();
+            lblVuelo1.Name = "lblVuelo1";
+            lblVuelo1.Size = new Size(0, 32);
+            lblVuelo1.TabIndex = 4;
+            // 
             // lblVuelo2
+            // 
             lblVuelo2.AutoSize = true;
             lblVuelo2.Font = new Font("Segoe UI", 12F);
             lblVuelo2.Location = new Point(782, 322);
-            lblVuelo2.Text = p2.GetId() + ":";
+            lblVuelo2.Name = "lblVuelo2";
+            lblVuelo2.Size = new Size(0, 32);
+            lblVuelo2.TabIndex = 6;
+            // 
+            // txtVel1
+            // 
+            txtVel1.Font = new Font("Segoe UI", 12F);
+            txtVel1.Location = new Point(954, 255);
+            txtVel1.Name = "txtVel1";
+            txtVel1.Size = new Size(100, 39);
+            txtVel1.TabIndex = 5;
+            // 
             // txtVel2
+            // 
             txtVel2.Font = new Font("Segoe UI", 12F);
-            txtVel2.Location = new Point(930, 315);
-            txtVel2.Size = new Size(100, 35);
-            txtVel2.Text = p2.GetVelocidad().ToString();
+            txtVel2.Location = new Point(954, 315);
+            txtVel2.Name = "txtVel2";
+            txtVel2.Size = new Size(100, 39);
+            txtVel2.TabIndex = 7;
+            // 
             // btnAplicarVel
+            // 
             btnAplicarVel.Location = new Point(782, 380);
+            btnAplicarVel.Name = "btnAplicarVel";
             btnAplicarVel.Size = new Size(300, 45);
+            btnAplicarVel.TabIndex = 8;
             btnAplicarVel.Text = "Cambiar velocidades y reiniciar";
             btnAplicarVel.UseVisualStyleBackColor = true;
             btnAplicarVel.Click += btnAplicarVel_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(778, 264);
+            label1.Name = "label1";
+            label1.Size = new Size(154, 25);
+            label1.TabIndex = 9;
+            label1.Text = "Velocidad Vuelo 1";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(782, 324);
+            label2.Name = "label2";
+            label2.Size = new Size(154, 25);
+            label2.TabIndex = 10;
+            label2.Text = "Velocidad Vuelo 2";
+            // 
             // FormSimulacion
             // 
             ClientSize = new Size(1270, 765);
+            Controls.Add(label2);
+            Controls.Add(label1);
             Controls.Add(lblEstadoAlarma);
             Controls.Add(btnDatos);
             Controls.Add(btnPredecir);
@@ -186,20 +227,19 @@ namespace InterfazGrafica
             Controls.Add(btnReiniciar);
             Controls.Add(btnMover);
             Controls.Add(panelEspacioAereo);
-
             Controls.Add(lblVuelo1);
             Controls.Add(txtVel1);
             Controls.Add(lblVuelo2);
             Controls.Add(txtVel2);
             Controls.Add(btnAplicarVel);
-
             Name = "FormSimulacion";
             Text = "Simulación del Espacio Aéreo";
             FormClosing += FormSimulacion_FormClosing;
             Load += FormSimulacion_Load;
             ResumeLayout(false);
+            PerformLayout();
 
-      
+
 
         }
 
@@ -415,30 +455,34 @@ namespace InterfazGrafica
             // FASE 11: antes de empezar, comprobamos si habrá conflicto
             if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
             {
-                DialogResult respuesta = MessageBox.Show(
-                    "Los vuelos entrarán en conflicto. ¿Quieres resolverlo cambiando la velocidad de un vuelo?",
-                    "Conflicto detectado",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                double vActual = p2.GetVelocidad();
+                double vPropuesta = p1.ObtenerVelocidadPropuesta(p2, distanciaSeg, tiempoCiclo);
 
-                if (respuesta == DialogResult.Yes)
+                if (vPropuesta > 0)
                 {
-                    double velocidadAntes = p2.GetVelocidad();
+                    //Mostramos el cambio de velocidad actual y propuesta
+                    DialogResult respuesta = MessageBox.Show(
+                        $"CONFLICTO DETECTADO EN LA RUTA.\n\n" +
+                        $"El sistema propone modificar la velocidad de {p2.GetId()}:\n" +
+                        $"• Velocidad actual: {vActual:F2} kt\n" +
+                        $"• Velocidad propuesta: {vPropuesta:F2} kt\n\n" +
+                        $"¿Desea aplicar esta modificación?",
+                        "Propuesta de Resolución de Conflicto",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
 
-                    if (p1.ResolverConflicto(p2, distanciaSeg, tiempoCiclo))
+                    if (respuesta == DialogResult.Yes)
                     {
-                        txtVel1.Text = p1.GetVelocidad().ToString();
-                        txtVel2.Text = p2.GetVelocidad().ToString();
-                        MessageBox.Show("Conflicto resuelto. La velocidad de " + p2.GetId() +
-                            " ha cambiado de " + velocidadAntes.ToString("F2") +
-                            " a " + p2.GetVelocidad().ToString("F2"));
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se ha encontrado ninguna velocidad que evite el conflicto. La simulación continúa sin cambios.");
+                        p2.SetVelocidad(vPropuesta);
+                        txtVel2.Text = vPropuesta.ToString("F2");
+                        MessageBox.Show($"Velocidad aplicada correctamente a {p2.GetId()}.");
                     }
                 }
-                // Si responde que No, no hacemos nada y la simulación sigue como siempre
+                else
+                {
+                    MessageBox.Show("Se ha detectado conflicto pero no se ha encontrado ninguna velocidad que lo resuelva.");
+                }
+
             }
 
             //Iniciamos automatico
@@ -482,6 +526,8 @@ namespace InterfazGrafica
 
         private void FormSimulacion_Load(object sender, EventArgs e)
         {
+            txtVel1.Text = p1.GetVelocidad().ToString();
+            txtVel2.Text = p2.GetVelocidad().ToString();
 
         }
     }

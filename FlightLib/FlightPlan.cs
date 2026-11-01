@@ -117,7 +117,7 @@ namespace FlightLib
 
         // Simula el futuro con copias y devuelve true si en algún momento
         // los dos vuelos están a menos de la distancia de seguridad
-        // Simula el futuro matemáticamente (método de la derivada)
+        // Utilizamos método de la derivada para simular lo que pasará
         public bool HabraConflicto(FlightPlan b, double distanciaSeguridad, double paso)
         {
             
@@ -125,7 +125,7 @@ namespace FlightLib
             if (this.Conflicto(b, distanciaSeguridad))
                 return true;
 
-            // 1. Calculamos las componentes vectoriales (Vx, Vy) del Avión A (this)
+            // 1. Calculamos las componentes vectoriales (Vx, Vy) del Avión A 
             double dxA = finalPosition.GetX() - currentPosition.GetX();
             double dyA = finalPosition.GetY() - currentPosition.GetY();
             double hipA = Math.Sqrt(dxA * dxA + dyA * dyA);
@@ -145,7 +145,7 @@ namespace FlightLib
             double dVx = vxA - vxB;
             double dVy = vyA - vyB;
 
-            // 4. Derivada de la distancia igualada a cero (para hallar el tiempo mínimo)
+            // 4. Derivada de la distancia igualada a cero (para buscar el tiempo mínimo)
             // Fórmula: t_min = -(dX0*dVx + dY0*dVy) / (dVx^2 + dVy^2)
             double denom = (dVx * dVx) + (dVy * dVy);
 
@@ -164,15 +164,48 @@ namespace FlightLib
             // Calculamos la distancia al cuadrado para ahorrar un Math.Sqrt()
             double distanciaMinimaAlCuadrado = (distX_min * distX_min) + (distY_min * distY_min);
 
-            // Nota sobre el punto 3: Si el profesor considera "distancia de seguridad" 
-            // como el radio de un solo avión, aquí deberías compararlo con (2 * distanciaSeguridad) al cuadrado.
-            // Si es la separación total requerida, lo dejamos así:
+            //Separación total requerida:
             return distanciaMinimaAlCuadrado < (distanciaSeguridad * distanciaSeguridad);
         }
 
+        //antes de establecer velocidad, pregunta si queremos 
+        public double ObtenerVelocidadPropuesta(FlightPlan b, double distanciaSeguridad, double paso)
+        {
+            double velocidadOriginal = b.GetVelocidad();
+            int porcentaje;
+
+            // Probar a bajar velocidad
+            porcentaje = 95;
+            while (porcentaje >= 10)
+            {
+                b.SetVelocidad(velocidadOriginal * porcentaje / 100.0);
+                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                {
+                    b.SetVelocidad(velocidadOriginal); // Restaurar
+                    return velocidadOriginal * porcentaje / 100.0;
+                }
+                porcentaje = porcentaje - 5;
+            }
+
+            // Probar a subir velocidad
+            porcentaje = 105;
+            while (porcentaje <= 200)
+            {
+                b.SetVelocidad(velocidadOriginal * porcentaje / 100.0);
+                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                {
+                    b.SetVelocidad(velocidadOriginal); // Restaurar
+                    return velocidadOriginal * porcentaje / 100.0;
+                }
+                porcentaje = porcentaje + 5;
+            }
+
+            b.SetVelocidad(velocidadOriginal); // Restaurar
+            return -1; // No se encontró solución
+        }
         //FASE 11
         //Cambia la velocidad del vuelo b hasta que no haya conflicto.
-        // Devuelve true si lo consigue y false si no hay solución.
+        //Devuelve true si lo consigue y false si no hay solución:
         public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad, double paso)
         {
             double velocidadOriginal = b.GetVelocidad();
