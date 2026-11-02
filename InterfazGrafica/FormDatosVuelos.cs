@@ -41,34 +41,47 @@ namespace InterfazGrafica
             dgvVuelos.Name = "dgvVuelos";
             dgvVuelos.RowHeadersVisible = false;
             dgvVuelos.RowHeadersWidth = 62;
-            dgvVuelos.Size = new Size(450, 150);
+            dgvVuelos.Size = new Size(597, 242);
             dgvVuelos.TabIndex = 0;
             dgvVuelos.CellClick += dgvVuelos_CellClick;
             // 
             // dataGridViewTextBoxColumn1
             // 
             dataGridViewTextBoxColumn1.MinimumWidth = 8;
-            dataGridViewTextBoxColumn1.Name = "ID";
+            dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             // 
             // dataGridViewTextBoxColumn2
             // 
             dataGridViewTextBoxColumn2.MinimumWidth = 8;
-            dataGridViewTextBoxColumn2.Name = "Velocidad";
+            dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             // 
             // dataGridViewTextBoxColumn3
             // 
             dataGridViewTextBoxColumn3.MinimumWidth = 8;
-            dataGridViewTextBoxColumn3.Name = "Posición";
+            dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
             // FormDatosVuelos
             // 
-            ClientSize = new Size(500, 200);
+            ClientSize = new Size(629, 318);
             Controls.Add(dgvVuelos);
             Name = "FormDatosVuelos";
             Text = "Datos de Vuelos";
             Load += FormDatosVuelos_Load;
             ((System.ComponentModel.ISupportInitialize)dgvVuelos).EndInit();
             ResumeLayout(false);
+
+            // dataGridViewTextBoxColumn1
+            dataGridViewTextBoxColumn1.HeaderText = "ID";
+            dataGridViewTextBoxColumn1.MinimumWidth = 8;
+            dataGridViewTextBoxColumn1.Name = "ID";
+            // dataGridViewTextBoxColumn2
+            dataGridViewTextBoxColumn2.HeaderText = "Velocidad";
+            dataGridViewTextBoxColumn2.MinimumWidth = 8;
+            dataGridViewTextBoxColumn2.Name = "Velocidad";
+            // dataGridViewTextBoxColumn3
+            dataGridViewTextBoxColumn3.HeaderText = "Posición";
+            dataGridViewTextBoxColumn3.MinimumWidth = 8;
+            dataGridViewTextBoxColumn3.Name = "Posición";
         }
 
         private void CargarDatos()

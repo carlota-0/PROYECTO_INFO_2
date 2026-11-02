@@ -89,6 +89,33 @@ namespace FlightLib
             this.currentPosition = new Position(initialPosition.GetX(), initialPosition.GetY());
         }
 
+
+
+        // Prolonga el destino hasta el borde del sector: el vuelo cruza todo el sector
+        // y "termina" cuando sale por el otro lado
+        public void ExtenderHastaBordeSector(double anchoSector, double altoSector)
+        {
+            double x0 = initialPosition.GetX();
+            double y0 = initialPosition.GetY();
+            double dx = finalPosition.GetX() - x0;
+            double dy = finalPosition.GetY() - y0;
+
+            // t = cuántas veces hay que repetir el vector (dx, dy) para llegar al borde
+            double t = double.MaxValue;
+
+            if (dx > 0) t = Math.Min(t, (anchoSector - x0) / dx);
+            else if (dx < 0) t = Math.Min(t, (0 - x0) / dx);
+
+            if (dy > 0) t = Math.Min(t, (altoSector - y0) / dy);
+            else if (dy < 0) t = Math.Min(t, (0 - y0) / dy);
+
+            // Si no hay dirección o el vuelo ya está fuera del sector, no cambiamos nada
+            if (t == double.MaxValue || t <= 0)
+                return;
+
+            finalPosition = new Position(x0 + t * dx, y0 + t * dy);
+        }
+
         // Devuelve la distancia con otro plan de vuelo pasado por parámetro
         public double Distancia(FlightPlan b)
         {
@@ -238,23 +265,6 @@ namespace FlightLib
             // No ha habido suerte: dejamos la velocidad como estaba
             b.SetVelocidad(velocidadOriginal);
             return false;
-        }
-
-        // =========================================================================
-        // MÉTODOS AUXILIARES
-        // =========================================================================
-        public void EscribeConsola()
-        {
-            Console.WriteLine("******************************");
-            Console.WriteLine("Datos del vuelo: ");
-            Console.WriteLine("Identificador: {0}", id);
-            Console.WriteLine("Velocidad: {0:F2}", velocidad);
-            Console.WriteLine("Posición actual: ({0:F2},{1:F2})", currentPosition.GetX(), currentPosition.GetY());
-
-            if (this.EstaDestino())
-                Console.WriteLine("Ha llegado al destino");
-
-            Console.WriteLine("******************************");
         }
     }
 }

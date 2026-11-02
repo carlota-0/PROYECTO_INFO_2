@@ -5,33 +5,18 @@ using FlightLib;
 
 namespace InterfazGrafica
 {
-    public class FormSimulacion : Form
+    
+    public partial class FormSimulacion : Form
     {
-        private Panel panelEspacioAereo;
+       
         private PictureBox avion1;
         private PictureBox avion2;
-        private Button btnMover;
-        private Button btnReiniciar;
         private double distanciaSeg;
-        private Button btnPredecir;
-        private Button btnDatos;
 
         private FlightPlan p1;
         private FlightPlan p2;
-        private Button btnAuto;
-        private Button btnDetener;
-        private System.Windows.Forms.Timer timerSimulador;
-        private System.ComponentModel.IContainer components;
         private FlightPlanList listaVuelos;
         private double tiempoCiclo = 10;
-        private Label lblEstadoAlarma;
-        private Label lblVuelo1;
-        private Label lblVuelo2;
-        private TextBox txtVel1;
-        private TextBox txtVel2;
-        private Label label1;
-        private Label label2;
-        private Button btnAplicarVel;
 
 
         // El constructor recibe los planes de vuelo desde Form1
@@ -45,205 +30,15 @@ namespace InterfazGrafica
             this.listaVuelos.AddFlightPlan(p2);
 
             InitializeComponent();
+
+            
+            lblVuelo1.Text = p1.GetId() + ":";
+            lblVuelo2.Text = p2.GetId() + ":";
+            txtVel1.Text = p1.GetVelocidad().ToString();
+            txtVel2.Text = p2.GetVelocidad().ToString();
+
             ConfigurarAviones();
         }
-
-        private void InitializeComponent()
-        {
-            components = new System.ComponentModel.Container();
-            panelEspacioAereo = new Panel();
-            btnMover = new Button();
-            btnReiniciar = new Button();
-            btnAuto = new Button();
-            btnDetener = new Button();
-            timerSimulador = new System.Windows.Forms.Timer(components);
-            btnPredecir = new Button();
-            btnDatos = new Button();
-            lblEstadoAlarma = new Label();
-            lblVuelo1 = new Label();
-            lblVuelo2 = new Label();
-            txtVel1 = new TextBox();
-            txtVel2 = new TextBox();
-            btnAplicarVel = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            SuspendLayout();
-            // 
-            // panelEspacioAereo
-            // 
-            panelEspacioAereo.BackColor = Color.LightGray;
-            panelEspacioAereo.Location = new Point(20, 20);
-            panelEspacioAereo.Name = "panelEspacioAereo";
-            panelEspacioAereo.Size = new Size(738, 405);
-            panelEspacioAereo.TabIndex = 1;
-            panelEspacioAereo.Paint += panelEspacioAereo_Paint;
-            // 
-            // btnMover
-            // 
-            btnMover.Location = new Point(555, 484);
-            btnMover.Name = "btnMover";
-            btnMover.Size = new Size(150, 46);
-            btnMover.TabIndex = 0;
-            btnMover.Text = "Avanzar Ciclo";
-            btnMover.Click += btnMover_Click;
-            // 
-            // btnReiniciar
-            // 
-            btnReiniciar.Location = new Point(782, 170);
-            btnReiniciar.Name = "btnReiniciar";
-            btnReiniciar.Size = new Size(150, 48);
-            btnReiniciar.TabIndex = 0;
-            btnReiniciar.Text = "Reiniciar";
-            btnReiniciar.Click += btnReiniciar_Click;
-            // 
-            // btnAuto
-            // 
-            btnAuto.Location = new Point(78, 486);
-            btnAuto.Name = "btnAuto";
-            btnAuto.Size = new Size(171, 46);
-            btnAuto.TabIndex = 2;
-            btnAuto.Text = "Automático";
-            btnAuto.UseVisualStyleBackColor = true;
-            btnAuto.Click += btnAuto_Click;
-            // 
-            // btnDetener
-            // 
-            btnDetener.Enabled = false;
-            btnDetener.Location = new Point(331, 486);
-            btnDetener.Name = "btnDetener";
-            btnDetener.Size = new Size(112, 44);
-            btnDetener.TabIndex = 3;
-            btnDetener.Text = "Detener";
-            btnDetener.UseVisualStyleBackColor = true;
-            btnDetener.Click += btnDetener_Click;
-            // 
-            // timerSimulador
-            // 
-            timerSimulador.Interval = 500;
-            timerSimulador.Tick += timerSimulador_Tick;
-            // 
-            // btnPredecir
-            // 
-            btnPredecir.Location = new Point(782, 83);
-            btnPredecir.Name = "btnPredecir";
-            btnPredecir.Size = new Size(150, 70);
-            btnPredecir.TabIndex = 1;
-            btnPredecir.Text = "Predecir Conflicto";
-            btnPredecir.Click += btnPredecir_Click;
-            // 
-            // btnDatos
-            // 
-            btnDatos.Location = new Point(782, 20);
-            btnDatos.Name = "btnDatos";
-            btnDatos.Size = new Size(150, 46);
-            btnDatos.TabIndex = 0;
-            btnDatos.Text = "Mostrar Datos";
-            btnDatos.Click += btnDatos_Click;
-            // 
-            // lblEstadoAlarma
-            // 
-            lblEstadoAlarma.BackColor = Color.Green;
-            lblEstadoAlarma.Font = new Font("Arial", 10F, FontStyle.Bold);
-            lblEstadoAlarma.ForeColor = Color.White;
-            lblEstadoAlarma.Location = new Point(20, 435);
-            lblEstadoAlarma.Name = "lblEstadoAlarma";
-            lblEstadoAlarma.Size = new Size(738, 30);
-            lblEstadoAlarma.TabIndex = 0;
-            lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
-            lblEstadoAlarma.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // lblVuelo1
-            // 
-            lblVuelo1.AutoSize = true;
-            lblVuelo1.Font = new Font("Segoe UI", 12F);
-            lblVuelo1.Location = new Point(782, 262);
-            lblVuelo1.Name = "lblVuelo1";
-            lblVuelo1.Size = new Size(0, 32);
-            lblVuelo1.TabIndex = 4;
-            // 
-            // lblVuelo2
-            // 
-            lblVuelo2.AutoSize = true;
-            lblVuelo2.Font = new Font("Segoe UI", 12F);
-            lblVuelo2.Location = new Point(782, 322);
-            lblVuelo2.Name = "lblVuelo2";
-            lblVuelo2.Size = new Size(0, 32);
-            lblVuelo2.TabIndex = 6;
-            // 
-            // txtVel1
-            // 
-            txtVel1.Font = new Font("Segoe UI", 12F);
-            txtVel1.Location = new Point(954, 255);
-            txtVel1.Name = "txtVel1";
-            txtVel1.Size = new Size(100, 39);
-            txtVel1.TabIndex = 5;
-            // 
-            // txtVel2
-            // 
-            txtVel2.Font = new Font("Segoe UI", 12F);
-            txtVel2.Location = new Point(954, 315);
-            txtVel2.Name = "txtVel2";
-            txtVel2.Size = new Size(100, 39);
-            txtVel2.TabIndex = 7;
-            // 
-            // btnAplicarVel
-            // 
-            btnAplicarVel.Location = new Point(782, 380);
-            btnAplicarVel.Name = "btnAplicarVel";
-            btnAplicarVel.Size = new Size(300, 45);
-            btnAplicarVel.TabIndex = 8;
-            btnAplicarVel.Text = "Cambiar velocidades y reiniciar";
-            btnAplicarVel.UseVisualStyleBackColor = true;
-            btnAplicarVel.Click += btnAplicarVel_Click;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(778, 264);
-            label1.Name = "label1";
-            label1.Size = new Size(154, 25);
-            label1.TabIndex = 9;
-            label1.Text = "Velocidad Vuelo 1";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(782, 324);
-            label2.Name = "label2";
-            label2.Size = new Size(154, 25);
-            label2.TabIndex = 10;
-            label2.Text = "Velocidad Vuelo 2";
-            // 
-            // FormSimulacion
-            // 
-            ClientSize = new Size(1270, 765);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(lblEstadoAlarma);
-            Controls.Add(btnDatos);
-            Controls.Add(btnPredecir);
-            Controls.Add(btnDetener);
-            Controls.Add(btnAuto);
-            Controls.Add(btnReiniciar);
-            Controls.Add(btnMover);
-            Controls.Add(panelEspacioAereo);
-            Controls.Add(lblVuelo1);
-            Controls.Add(txtVel1);
-            Controls.Add(lblVuelo2);
-            Controls.Add(txtVel2);
-            Controls.Add(btnAplicarVel);
-            Name = "FormSimulacion";
-            Text = "Simulación del Espacio Aéreo";
-            FormClosing += FormSimulacion_FormClosing;
-            Load += FormSimulacion_Load;
-            ResumeLayout(false);
-            PerformLayout();
-
-
-
-        }
-
-
 
         private void ConfigurarAviones()
         {
@@ -310,7 +105,7 @@ namespace InterfazGrafica
         {
             AvanzarCiclo();
         }
-        /////COSAS VERSION 1/////
+        
         private void ReiniciarSimulacion()
         {
             p1.Restart();
@@ -323,11 +118,13 @@ namespace InterfazGrafica
             lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
             lblEstadoAlarma.BackColor = Color.Green;
         }
-
+        
         private void btnReiniciar_Click(object sender, EventArgs e)
         {
             ReiniciarSimulacion();
         }
+
+        /////COSAS VERSION 1/////
         private void btnAplicarVel_Click(object sender, EventArgs e)
         {
             double v1, v2;
@@ -361,8 +158,7 @@ namespace InterfazGrafica
             else
                 MessageBox.Show("Con las nuevas velocidades no habrá conflicto.");
         }
-        
-        ///COSAS VERSION 1///
+       
 
         //FASE 5: CONsultamos info al hacer clic en un avion
         private void avion_Click(object sender, EventArgs e)
@@ -382,6 +178,10 @@ namespace InterfazGrafica
         }
         private void panelEspacioAereo_Paint(object sender, PaintEventArgs e)
         {
+            // En tiempo de diseño los aviones aún no existen: no dibujamos nada
+            if (p1 == null || p2 == null || avion1 == null || avion2 == null)
+                return;
+
             Graphics graphics = e.Graphics;
             Pen myPen = new Pen(Color.Black);
 
@@ -430,7 +230,9 @@ namespace InterfazGrafica
             int centroY1 = avion1.Location.Y + mitadAvion;
             // Se resta el radio para que el centro del círculo coincida con el centro del avión
             graphics.DrawEllipse(penSeguridad, centroX1 - radioSeguridad, centroY1 - radioSeguridad, radioSeguridad * 2, radioSeguridad * 2);
-            
+
+
+
             // ETIQUETA ID VUELO 1 (Se dibuja 22px a la derecha del avión)
             graphics.DrawString(p1.GetId(), fontID, brushID, avion1.Location.X + 22, avion1.Location.Y - 5);
             // Centro exacto del Avión 2 y dibujo de su elipse
@@ -441,7 +243,7 @@ namespace InterfazGrafica
             graphics.DrawString(p2.GetId(), fontID, brushID, avion2.Location.X + 22, avion2.Location.Y - 5);
             penSeguridad.Dispose();
         }
-        
+
 
         //FASE 8: Boton para realizar simulacion automatica
         private void btnAuto_Click(object sender, EventArgs e)
@@ -455,34 +257,30 @@ namespace InterfazGrafica
             // FASE 11: antes de empezar, comprobamos si habrá conflicto
             if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
             {
-                double vActual = p2.GetVelocidad();
-                double vPropuesta = p1.ObtenerVelocidadPropuesta(p2, distanciaSeg, tiempoCiclo);
+                DialogResult respuesta = MessageBox.Show(
+                    "Los vuelos entrarán en conflicto. ¿Quieres resolverlo cambiando la velocidad de un vuelo?",
+                    "Conflicto detectado",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
 
-                if (vPropuesta > 0)
+                if (respuesta == DialogResult.Yes)
                 {
-                    //Mostramos el cambio de velocidad actual y propuesta
-                    DialogResult respuesta = MessageBox.Show(
-                        $"CONFLICTO DETECTADO EN LA RUTA.\n\n" +
-                        $"El sistema propone modificar la velocidad de {p2.GetId()}:\n" +
-                        $"• Velocidad actual: {vActual:F2} kt\n" +
-                        $"• Velocidad propuesta: {vPropuesta:F2} kt\n\n" +
-                        $"¿Desea aplicar esta modificación?",
-                        "Propuesta de Resolución de Conflicto",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
+                    double velocidadAntes = p2.GetVelocidad();
 
-                    if (respuesta == DialogResult.Yes)
+                    if (p1.ResolverConflicto(p2, distanciaSeg, tiempoCiclo))
                     {
-                        p2.SetVelocidad(vPropuesta);
-                        txtVel2.Text = vPropuesta.ToString("F2");
-                        MessageBox.Show($"Velocidad aplicada correctamente a {p2.GetId()}.");
+                        txtVel1.Text = p1.GetVelocidad().ToString();
+                        txtVel2.Text = p2.GetVelocidad().ToString();
+                        MessageBox.Show("Conflicto resuelto. La velocidad de " + p2.GetId() +
+                            " ha cambiado de " + velocidadAntes.ToString("F2") +
+                            " a " + p2.GetVelocidad().ToString("F2"));
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se ha encontrado ninguna velocidad que evite el conflicto. La simulación continúa sin cambios.");
                     }
                 }
-                else
-                {
-                    MessageBox.Show("Se ha detectado conflicto pero no se ha encontrado ninguna velocidad que lo resuelva.");
-                }
-
+                // Si responde que No, no hacemos nada y la simulación sigue como siempre
             }
 
             //Iniciamos automatico
@@ -518,6 +316,7 @@ namespace InterfazGrafica
             else
                 MessageBox.Show("No se producirá ningún conflicto.", "Predicción");
         }
+
         //añadimos método para que el timer no siga cuado cerramos formulario y hayamos activado el automatico
         private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -526,8 +325,6 @@ namespace InterfazGrafica
 
         private void FormSimulacion_Load(object sender, EventArgs e)
         {
-            txtVel1.Text = p1.GetVelocidad().ToString();
-            txtVel2.Text = p2.GetVelocidad().ToString();
 
         }
     }

@@ -47,16 +47,6 @@ namespace FlightLib
             }
         }
 
-        public void EscribeConsola()
-        {
-            int i = 0;
-            while (i < number)
-            {
-                vector[i].EscribeConsola();
-                i++;
-            }
-        }
-
         
 
         }
