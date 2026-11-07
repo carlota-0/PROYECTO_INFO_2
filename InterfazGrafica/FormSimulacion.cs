@@ -222,8 +222,29 @@ namespace InterfazGrafica
             // Como definimos que los aviones miden 20x20, su centro está a 10 píxeles
             int mitadAvion = 10;
 
-            // Creamos un lápiz naranja
-            Pen penSeguridad = new Pen(Color.Orange);
+
+            //CAMBIO: Si hay conflicto entre aviones cambiar color de las circumferencias
+            Color colorCirculo;
+            int grosor;
+
+            if(p1.Conflicto(p2, distanciaSeg))
+            {
+                colorCirculo = Color.Red;
+                grosor = 3;
+                avion1.BackColor = Color.Red;
+                avion2.BackColor = Color.Red;
+            }
+            else
+            {
+                // Si el sector está seguro: círculos verdes 
+                colorCirculo = Color.Green;
+                grosor = 2;
+                avion1.BackColor = Color.Blue;
+                avion2.BackColor = Color.Red;
+            }
+
+         
+            Pen penSeguridad = new Pen(colorCirculo,grosor);
 
             // Centro exacto del Avión 1 y dibujo de su elipse
             int centroX1 = avion1.Location.X + mitadAvion;
@@ -257,29 +278,35 @@ namespace InterfazGrafica
             // FASE 11: antes de empezar, comprobamos si habrá conflicto
             if (p1.HabraConflicto(p2, distanciaSeg, tiempoCiclo))
             {
+                //Obtenemos velocidad actual y propuesta antes de preguntar
+                double velocidadActual = p2.GetVelocidad();
+                double velocidadPropuesta = p1.ObtenerVelocidadPropuesta(p2, distanciaSeg, tiempoCiclo);
+
                 DialogResult respuesta = MessageBox.Show(
-                    "Los vuelos entrarán en conflicto. ¿Quieres resolverlo cambiando la velocidad de un vuelo?",
+                    "CONFLICTO DETECTADO EN LA RUTA.\n\n" +
+                    "Propuesta de cambio para el vuelo " + p2.GetId() + ":\n" +
+                    "• Velocidad actual: " + velocidadActual.ToString("F2") + "\n" +
+                    "• Velocidad propuesta: " + velocidadPropuesta.ToString("F2") + "\n\n" +
+                    "¿Deseas aplicar esta nueva velocidad?",
                     "Conflicto detectado",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
                 if (respuesta == DialogResult.Yes)
                 {
-                    double velocidadAntes = p2.GetVelocidad();
 
-                    if (p1.ResolverConflicto(p2, distanciaSeg, tiempoCiclo))
-                    {
-                        txtVel1.Text = p1.GetVelocidad().ToString();
-                        txtVel2.Text = p2.GetVelocidad().ToString();
-                        MessageBox.Show("Conflicto resuelto. La velocidad de " + p2.GetId() +
-                            " ha cambiado de " + velocidadAntes.ToString("F2") +
-                            " a " + p2.GetVelocidad().ToString("F2"));
-                    }
-                    else
-                    {
-                        MessageBox.Show("No se ha encontrado ninguna velocidad que evite el conflicto. La simulación continúa sin cambios.");
-                    }
+                    // Aplicamos la velocidad y actualizamos el TextBox de la pantalla
+                    p2.SetVelocidad(velocidadPropuesta);
+                    txtVel2.Text = velocidadPropuesta.ToString("F2");
+
+                    MessageBox.Show("Velocidad de " + p2.GetId() + " cambiada a " + velocidadPropuesta.ToString("F2"));
                 }
+
+                else
+                {
+                    MessageBox.Show("No se ha encontrado ninguna velocidad que evite el conflicto. La simulación continúa sin cambios.");
+                }
+                
                 // Si responde que No, no hacemos nada y la simulación sigue como siempre
             }
 
@@ -325,6 +352,19 @@ namespace InterfazGrafica
 
         private void FormSimulacion_Load(object sender, EventArgs e)
         {
+            // 1. Cargamos las velocidades iniciales en las cajas de texto (por si estaban vacías)
+            txtVel1.Text = p1.GetVelocidad().ToString("F2");
+            txtVel2.Text = p2.GetVelocidad().ToString("F2");
+
+            // 2. Extendemos las trayectorias de ambos vuelos hasta los bordes del panel
+            double anchoPanel = panelEspacioAereo.Width;
+            double altoPanel = panelEspacioAereo.Height;
+
+            p1.ExtenderHastaBordeSector(anchoPanel, altoPanel);
+            p2.ExtenderHastaBordeSector(anchoPanel, altoPanel);
+
+            // 3. Forzamos a repintar las líneas de trayectoria completas
+            panelEspacioAereo.Invalidate();
 
         }
     }
