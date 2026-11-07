@@ -363,7 +363,7 @@ namespace InterfazGrafica
             p1.ExtenderHastaBordeSector(anchoPanel, altoPanel);
             p2.ExtenderHastaBordeSector(anchoPanel, altoPanel);
 
-            // 3. Forzamos a repintar las líneas de trayectoria completas
+            // 3. Forzamos a repintar las líneas de trayectoria completassssssssss
             panelEspacioAereo.Invalidate();
 
         }
