@@ -1,0 +1,4 @@
+// ID Xinicial Yinicial Xfinal Yfinal Velocidad
+IBE100 100 300 700 300 150
+VLG200 400 50 400 550 150
+UAE300 100 100 700 100 200
