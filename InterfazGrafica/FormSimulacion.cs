@@ -1,3 +1,4 @@
+/* METODO USADO EN LA VERSION 1 CON SOLAMENTE DOS AVIONES
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -13,32 +14,14 @@ namespace InterfazGrafica
         private PictureBox avion2;
         private double distanciaSeg;
 
-        private FlightPlan p1;
-        private FlightPlan p2;
+        FlightPlanList listaVuelos;
+        double distanciaSeguridad;
         private FlightPlanList listaVuelos;
         private double tiempoCiclo = 10;
 
 
         // El constructor recibe los planes de vuelo desde Form1
-        public FormSimulacion(FlightPlan plan1, FlightPlan plan2, double distancia)
-        {
-            this.p1 = plan1;
-            this.p2 = plan2;
-            this.distanciaSeg = distancia;
-            this.listaVuelos = new FlightPlanList();
-            this.listaVuelos.AddFlightPlan(p1);
-            this.listaVuelos.AddFlightPlan(p2);
-
-            InitializeComponent();
-
-            
-            lblVuelo1.Text = p1.GetId() + ":";
-            lblVuelo2.Text = p2.GetId() + ":";
-            txtVel1.Text = p1.GetVelocidad().ToString();
-            txtVel2.Text = p2.GetVelocidad().ToString();
-
-            ConfigurarAviones();
-        }
+        
 
         private void ConfigurarAviones()
         {
@@ -367,5 +350,279 @@ namespace InterfazGrafica
             panelEspacioAereo.Invalidate();
 
         }
+    }
+}
+*/
+// VERSION DOS CON LA LISTA DE VUELOS EN VEX DE DOS FLIGHT PLANS
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Collections.Generic; 
+using FlightLib;
+
+namespace InterfazGrafica
+{
+    public partial class FormSimulacion : Form
+    {
+        // 1. ATRIBUTOS
+        private double distanciaSeg;
+        private FlightPlanList listaVuelos;
+        private double tiempoCiclo = 10;
+
+        // Creamos una lista para guardar los "dibujitos" (PictureBox) de todos los aviones
+        private List<PictureBox> dibujosAviones = new List<PictureBox>();
+
+        // 2. CONSTRUCTOR ACTUALIZADO: Recibe la lista desde Form1
+        public FormSimulacion(FlightPlanList listaVuelos, double distancia)
+        {
+            this.listaVuelos = listaVuelos;
+            this.distanciaSeg = distancia;
+
+            InitializeComponent();
+            ConfigurarAviones();
+
+        }
+
+        // 3. CONFIGURAR AVIONES: Bucle para dibujar todos los aviones de la lista
+        private void ConfigurarAviones()
+        {
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+
+                if (plan != null)
+                {
+                    PictureBox pb = new PictureBox();
+                    pb.Width = 20;
+                    pb.Height = 20;
+                    pb.BackColor = Color.Blue; // Por defecto todos azules
+                    pb.Location = new Point((int)plan.GetInitialPosition().GetX(), (int)plan.GetInitialPosition().GetY());
+                    pb.Tag = plan;
+                    pb.Click += new EventHandler(this.avion_Click);
+
+                    panelEspacioAereo.Controls.Add(pb);
+                    dibujosAviones.Add(pb); // Lo guardamos en nuestra lista de PictureBox
+                }
+            }
+        }
+
+        // 4. AVANZAR CICLO: Mueve toda la lista a la vez
+        private void AvanzarCiclo()
+        {
+            listaVuelos.Mover(tiempoCiclo);
+
+            bool todosHanLlegado = true;
+            bool hayConflicto = false;
+
+            // Actualizamos la posición de cada PictureBox y comprobamos estado
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                PictureBox pb = dibujosAviones[i];
+
+                if (plan != null)
+                {
+                    pb.Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
+
+                    if (!plan.EstaDestino())
+                        todosHanLlegado = false;
+
+                    // Comprobamos conflicto de este avión con cualquier otro de la lista
+                    for (int j = i + 1; j < listaVuelos.GetCount(); j++)
+                    {
+                        FlightPlan otroPlan = listaVuelos.GetFlightPlan(j);
+                        if (otroPlan != null && plan.Conflicto(otroPlan, distanciaSeg))
+                        {
+                            hayConflicto = true;
+                        }
+                    }
+                }
+            }
+
+            panelEspacioAereo.Invalidate();
+
+            if (hayConflicto)
+            {
+                lblEstadoAlarma.Text = "¡ALARMA: PÉRDIDA DE SEPARACIÓN ENTRE VUELOS!";
+                lblEstadoAlarma.BackColor = Color.Red;
+            }
+            else
+            {
+                lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
+                lblEstadoAlarma.BackColor = Color.Green;
+            }
+
+            if (timerSimulador.Enabled && todosHanLlegado)
+            {
+                PararAutomatica();
+                MessageBox.Show("Todos los vuelos han llegado a su destino. Simulación terminada.");
+            }
+        }
+
+        private void PararAutomatica()
+        {
+            timerSimulador.Stop();
+            btnAuto.Enabled = true;
+            btnDetener.Enabled = false;
+            btnMover.Enabled = true;
+        }
+
+        private void btnMover_Click(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+
+        private void ReiniciarSimulacion()
+        {
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
+                    plan.Restart();
+                    dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
+                }
+            }
+
+            panelEspacioAereo.Invalidate();
+            lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
+            lblEstadoAlarma.BackColor = Color.Green;
+        }
+
+        private void btnReiniciar_Click(object sender, EventArgs e)
+        {
+            ReiniciarSimulacion();
+        }
+
+        // FASE 5: Consultamos info al hacer clic en un avion
+        private void avion_Click(object sender, EventArgs e)
+        {
+            PictureBox avionClicado = (PictureBox)sender;
+            FlightPlan plan = (FlightPlan)avionClicado.Tag;
+
+            string info = $"Identificador: {plan.GetId()}\n" +
+                          $"Velocidad: {plan.GetVelocidad():F2}\n" +
+                          $"Posición actual: ({plan.GetCurrentPosition().GetX():F2}, {plan.GetCurrentPosition().GetY():F2})";
+
+            MessageBox.Show(info, "Información del Vuelo");
+        }
+
+        // 5. EVENTO PAINT: Dibuja las líneas y radios de seguridad de TODA la lista
+        private void panelEspacioAereo_Paint(object sender, PaintEventArgs e)
+        {
+            if (listaVuelos == null || listaVuelos.GetCount() == 0) return;
+
+            Graphics graphics = e.Graphics;
+            Pen penTrayectoria = new Pen(Color.Black);
+            Font fontID = new Font("Arial", 9, FontStyle.Bold);
+            Brush brushID = Brushes.Black;
+
+            int centro = 10;
+            int radioSeguridad = (int)this.distanciaSeg;
+            int mitadAvion = 10;
+
+            // 1. Dibujar trayectorias
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
+                    Point ini = new Point((int)plan.GetInitialPosition().GetX() + centro, (int)plan.GetInitialPosition().GetY() + centro);
+                    Point fin = new Point((int)plan.GetFinalPosition().GetX() + centro, (int)plan.GetFinalPosition().GetY() + centro);
+
+                    int dx = fin.X - ini.X;
+                    int dy = fin.Y - ini.Y;
+                    Point bordeIni = new Point(ini.X - dx * 100, ini.Y - dy * 100);
+                    Point bordeFin = new Point(ini.X + dx * 100, ini.Y + dy * 100);
+
+                    graphics.DrawLine(penTrayectoria, bordeIni, bordeFin);
+                }
+            }
+            penTrayectoria.Dispose();
+
+            // 2. Dibujar círculos de seguridad y comprobar conflictos
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                PictureBox pb = dibujosAviones[i];
+
+                if (plan != null)
+                {
+                    bool enConflicto = false;
+                    for (int j = 0; j < listaVuelos.GetCount(); j++)
+                    {
+                        if (i != j) // No compararse consigo mismo
+                        {
+                            FlightPlan otroPlan = listaVuelos.GetFlightPlan(j);
+                            if (otroPlan != null && plan.Conflicto(otroPlan, distanciaSeg))
+                            {
+                                enConflicto = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    Color colorCirculo = enConflicto ? Color.Red : Color.Green;
+                    int grosor = enConflicto ? 3 : 2;
+                    pb.BackColor = enConflicto ? Color.Red : Color.Blue;
+
+                    Pen penSeguridad = new Pen(colorCirculo, grosor);
+                    int centroX = pb.Location.X + mitadAvion;
+                    int centroY = pb.Location.Y + mitadAvion;
+
+                    graphics.DrawEllipse(penSeguridad, centroX - radioSeguridad, centroY - radioSeguridad, radioSeguridad * 2, radioSeguridad * 2);
+                    graphics.DrawString(plan.GetId(), fontID, brushID, pb.Location.X + 22, pb.Location.Y - 5);
+
+                    penSeguridad.Dispose();
+                }
+            }
+        }
+
+        private void btnAuto_Click(object sender, EventArgs e)
+        {
+            // Para la Versión 2, simplificamos el automático para que funcione con N aviones
+            timerSimulador.Start();
+            btnAuto.Enabled = false;
+            btnDetener.Enabled = true;
+            btnMover.Enabled = false;
+        }
+
+        private void btnDetener_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+        }
+
+        private void timerSimulador_Tick(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+
+        private void btnDatos_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Funcionalidad deshabilitada para listas en V2.", "Aviso");
+        }
+
+        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            timerSimulador.Stop();
+        }
+
+        private void FormSimulacion_Load(object sender, EventArgs e)
+        {
+            double anchoPanel = panelEspacioAereo.Width;
+            double altoPanel = panelEspacioAereo.Height;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
+                    plan.ExtenderHastaBordeSector(anchoPanel, altoPanel);
+                }
+            }
+
+            panelEspacioAereo.Invalidate();
+        }
+
     }
 }

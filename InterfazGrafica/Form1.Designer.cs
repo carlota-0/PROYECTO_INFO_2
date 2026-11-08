@@ -33,6 +33,7 @@
             menuPlanesVuelo = new ToolStripMenuItem();
             menuParametros = new ToolStripMenuItem();
             menuSimulacion = new ToolStripMenuItem();
+            cargarPlanesDeVueloDesdeArchivoToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -42,46 +43,55 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { menuOpciones });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(976, 33);
+            menuStrip1.Padding = new Padding(4, 1, 0, 1);
+            menuStrip1.Size = new Size(683, 24);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
             // menuOpciones
             // 
-            menuOpciones.DropDownItems.AddRange(new ToolStripItem[] { menuPlanesVuelo, menuParametros, menuSimulacion });
+            menuOpciones.DropDownItems.AddRange(new ToolStripItem[] { menuPlanesVuelo, menuParametros, menuSimulacion, cargarPlanesDeVueloDesdeArchivoToolStripMenuItem });
             menuOpciones.Name = "menuOpciones";
-            menuOpciones.Size = new Size(103, 29);
+            menuOpciones.Size = new Size(69, 22);
             menuOpciones.Text = "Opciones";
             menuOpciones.Click += menuOpciones_Click;
             // 
             // menuPlanesVuelo
             // 
             menuPlanesVuelo.Name = "menuPlanesVuelo";
-            menuPlanesVuelo.Size = new Size(320, 34);
+            menuPlanesVuelo.Size = new Size(270, 22);
             menuPlanesVuelo.Text = "Introducir planes de vuelo";
             menuPlanesVuelo.Click += menuPlanesVuelo_Click;
             // 
             // menuParametros
             // 
             menuParametros.Name = "menuParametros";
-            menuParametros.Size = new Size(320, 34);
+            menuParametros.Size = new Size(270, 22);
             menuParametros.Text = "Parámetros de vuelo";
             menuParametros.Click += menuParametros_Click;
             // 
             // menuSimulacion
             // 
             menuSimulacion.Name = "menuSimulacion";
-            menuSimulacion.Size = new Size(320, 34);
+            menuSimulacion.Size = new Size(270, 22);
             menuSimulacion.Text = "Iniciar simulación";
             menuSimulacion.Click += menuSimulacion_Click;
             // 
+            // cargarPlanesDeVueloDesdeArchivoToolStripMenuItem
+            // 
+            cargarPlanesDeVueloDesdeArchivoToolStripMenuItem.Name = "cargarPlanesDeVueloDesdeArchivoToolStripMenuItem";
+            cargarPlanesDeVueloDesdeArchivoToolStripMenuItem.Size = new Size(270, 22);
+            cargarPlanesDeVueloDesdeArchivoToolStripMenuItem.Text = "Cargar planes de vuelo desde archivo";
+            cargarPlanesDeVueloDesdeArchivoToolStripMenuItem.Click += cargarPlanesDeVueloDesdeArchivoToolStripMenuItem_Click;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(976, 540);
+            ClientSize = new Size(683, 324);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
+            Margin = new Padding(2, 2, 2, 2);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
@@ -98,5 +108,6 @@
         private ToolStripMenuItem menuPlanesVuelo;
         private ToolStripMenuItem menuParametros;
         private ToolStripMenuItem menuSimulacion;
+        private ToolStripMenuItem cargarPlanesDeVueloDesdeArchivoToolStripMenuItem;
     }
 }

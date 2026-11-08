@@ -9,47 +9,47 @@ namespace FlightLib
 {
     public class FlightPlanList
     {
-        private FlightPlan[] vector = new FlightPlan[10];
-        private int number = 0;
+        //VERSION 2
+        private List<FlightPlan> lista = new List<FlightPlan>();
 
+        // Añade el vuelo y devuelve el índice donde lo ha guardado
         public int AddFlightPlan(FlightPlan p)
         {
-            if (number == 10)
-            {
-                return -1;
-            }
-            else
-            {
-                vector[number] = p;
-                number++;
-                return 0;
-            }
+            lista.Add(p); // Add hace todo el trabajo de meterlo al final
+            return lista.Count - 1; // Count nos dice cuántos hay
+        }
+        public int GetCount()
+        {
+            return lista.Count;
         }
 
         public FlightPlan GetFlightPlan(int i)
         {
-            if (i < 0 || i >= number)
+            // Count sustituye a tu antigua variable "number"
+            if (i < 0 || i >= lista.Count)
             {
                 return null;
             }
             else
             {
-                return vector[i];
+                // En C#, las List se leen con corchetes igual que los vectores
+                return lista[i];
             }
         }
+
         public void Mover(double tiempo)
         {
             int i = 0;
-            while (i < number)
+            while (i < lista.Count)
             {
-                vector[i].Mover(tiempo);
+                lista[i].Mover(tiempo);
                 i++;
             }
         }
 
-        
 
-        }
+
+    }
     }
 
         
