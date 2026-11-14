@@ -40,6 +40,7 @@ namespace InterfazGrafica
             lblEstadoAlarma = new Label();
             btnAplicarVel = new Button();
             btnPredecir = new Button();
+            btnDeshacer = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -127,9 +128,20 @@ namespace InterfazGrafica
             btnPredecir.UseVisualStyleBackColor = true;
             btnPredecir.Click += btnPredecir_Click;
             // 
+            // btnDeshacer
+            // 
+            btnDeshacer.Location = new Point(238, 758);
+            btnDeshacer.Name = "btnDeshacer";
+            btnDeshacer.Size = new Size(141, 49);
+            btnDeshacer.TabIndex = 6;
+            btnDeshacer.Text = "Deshacer";
+            btnDeshacer.UseVisualStyleBackColor = true;
+            btnDeshacer.Click += btn_Deshacer_Click;
+            // 
             // FormSimulacion
             // 
-            ClientSize = new Size(1655, 909);
+            ClientSize = new Size(1655, 828);
+            Controls.Add(btnDeshacer);
             Controls.Add(btnPredecir);
             Controls.Add(btnAplicarVel);
             Controls.Add(lblEstadoAlarma);
@@ -156,5 +168,6 @@ namespace InterfazGrafica
         private Label lblEstadoAlarma;
         private Button btnAplicarVel;
         private Button btnPredecir;
+        private Button btnDeshacer;
     }
 }

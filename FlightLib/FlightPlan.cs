@@ -1,41 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FlightLib
 {
+    public class GestionUsuarios
+    {
+        // Atributo privado para mantener la conexión
+        private SQLiteConnection cnx;
+
+        // Abre la conexión y se asegura de que la tabla exista
+        public void Iniciar()
+        {
+            string dataSource = "Data Source=usuarios.db";
+            cnx = new SQLiteConnection(dataSource);
+            cnx.Open();
+
+            // Magia: Si el archivo está vacío, crea la tabla automáticamente
+            string sql = "CREATE TABLE IF NOT EXISTS usuarios (username varchar primarykey, password varchar)";
+            SQLiteCommand cmd = new SQLiteCommand(sql, cnx);
+            cmd.ExecuteNonQuery();
+        }
+
+        // Cierra la conexión
+        public void Cerrar()
+        {
+            cnx.Close();
+        }
+
+        // Comprueba si el usuario y la contraseña coinciden en la base de datos
+        public bool ComprobarLogin(string user, string pass)
+        {
+            DataTable dt = new DataTable();
+            string sql = "SELECT * FROM usuarios WHERE username='" + user + "' AND password='" + pass + "'";
+            SQLiteDataAdapter adp = new SQLiteDataAdapter(sql, cnx);
+            adp.Fill(dt);
+
+            // Si encuentra exactamente 1 fila, las credenciales son correctas
+            if (dt.Rows.Count == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // Registra un nuevo usuario en la base de datos
+        public int RegistrarUsuario(string user, string pass)
+        {
+            // 1. Primero comprobamos si el nombre de usuario ya existe
+            DataTable dt = new DataTable();
+            string sqlCheck = "SELECT * FROM usuarios WHERE username='" + user + "'";
+            SQLiteDataAdapter adp = new SQLiteDataAdapter(sqlCheck, cnx);
+            adp.Fill(dt);
+
+            if (dt.Rows.Count > 0)
+            {
+                return -1; // Código de error: el usuario ya existe
+            }
+
+            // 2. Si no existe, lo insertamos
+            string sql = "INSERT INTO usuarios VALUES ('" + user + "', '" + pass + "')";
+            SQLiteCommand command = new SQLiteCommand(sql, cnx);
+            int affectedRows = command.ExecuteNonQuery();
+
+            if (affectedRows == 1)
+            {
+                return 0; // Código de éxito
+            }
+            else
+            {
+                return -2; // Código de error desconocido
+            }
+        }
+    }
     public class FlightPlan
     {
         // =========================================================================
         // ATRIBUTOS
         // =========================================================================
         private string id;
+        private string company;
         private Position initialPosition;
         private Position currentPosition;
         private Position finalPosition;
         private double velocidad;
+        private Stack<Position> historialPosiciones;
 
-        // =========================================================================
-        // CONSTRUCTOR
-        // =========================================================================
-        public FlightPlan(string id, double cpx, double cpy, double fpx, double fpy, double velocidad)
+        //CONSTRUCTORES
+        //----------------------------------------------
+        public FlightPlan(string id, string company, double cpx, double cpy, double fpx, double fpy, double velocidad)
         {
             this.id = id;
+            this.company = company;
             this.initialPosition = new Position(cpx, cpy);
             this.currentPosition = new Position(cpx, cpy);
             this.finalPosition = new Position(fpx, fpy);
             this.velocidad = velocidad;
+            this.historialPosiciones = new Stack<Position>();
         }
 
-        // =========================================================================
-        // GETTERS Y SETTERS
-        // =========================================================================
+        //GETTERS Y SETTERS
+        //----------------------------------------
         public string GetId() 
         { return id; }
         public void SetId(string id) 
         { this.id = id; }
+        public string GetCompany()
+        {
+            return company;
+        }
+        public void SetCompany(string company)
+        {
+            this.company = company;
+        }
         public Position GetCurrentPosition() 
         { return currentPosition; }
         public Position GetFinalPosition() 
@@ -47,27 +132,30 @@ namespace FlightLib
         public void SetVelocidad(double velocidad) 
         { this.velocidad = velocidad; }
 
-        // =========================================================================
-        // MÉTODOS PRINCIPALES DE LA SIMULACIÓN (Fase 1)
-        // =========================================================================
+        //MÉTODOS
+        //--------------------------------------------------
 
-        // Devuelve true si el avión ha llegado a su destino
+        // Comprueba que el avión ha llegado a su destino
         public bool EstaDestino()
         {
             return (currentPosition.GetX() == finalPosition.GetX() &&
                     currentPosition.GetY() == finalPosition.GetY());
         }
 
-        // Mueve el avión según el tiempo introducido
+        // Mueve el avión según el tiempo introducido (tiempo de ciclo)
         public void Mover(double tiempo)
         {
-           
+
+            historialPosiciones.Push(new Position(currentPosition.GetX(), currentPosition.GetY()));
 
             //Calculamos la distancia recorrida en el tiempo dado
             double distancia = tiempo * this.velocidad / 60;
 
             //Calculamos las razones trigonométricas
             double hipotenusa = Math.Sqrt((finalPosition.GetX() - currentPosition.GetX()) * (finalPosition.GetX() - currentPosition.GetX()) + (finalPosition.GetY() - currentPosition.GetY()) * (finalPosition.GetY() - currentPosition.GetY()));
+            if (hipotenusa == 0)
+                return;
+
             double coseno = (finalPosition.GetX() - currentPosition.GetX()) / hipotenusa;
             double seno = (finalPosition.GetY() - currentPosition.GetY()) / hipotenusa;
 
@@ -75,7 +163,7 @@ namespace FlightLib
             double x = currentPosition.GetX() + distancia * coseno;
             double y = currentPosition.GetY() + distancia * seno;
 
-            //Modificar MoverVuelo para que no se pase del destino
+            //Modificar Mover para que no se pase del destino
             Position nextPosition = new Position(x, y);
             if (currentPosition.Distancia(nextPosition) < hipotenusa)
                 currentPosition = nextPosition;
@@ -87,9 +175,18 @@ namespace FlightLib
         public void Restart()
         {
             this.currentPosition = new Position(initialPosition.GetX(), initialPosition.GetY());
+            this.historialPosiciones.Clear(); //vacia su historial de movimientos
         }
-
-
+        //Deshace el último paso del avión
+        public bool DeshacerPaso()
+        {
+            if (historialPosiciones.Count > 0)
+            {
+                currentPosition = historialPosiciones.Pop();
+                return true;
+            }
+            return false;
+        }
 
         // Prolonga el destino hasta el borde del sector: el vuelo cruza todo el sector
         // y "termina" cuando sale por el otro lado
@@ -129,19 +226,7 @@ namespace FlightLib
             return (this.Distancia(b) < distanciaSeguridad*2);
         }
 
-        
-        //FASE 10
-
-        // Crea una copia del vuelo (para poder simular sin tocar el vuelo real)
-        private FlightPlan Copia()
-        {
-            FlightPlan copia = new FlightPlan(id,
-                currentPosition.GetX(), currentPosition.GetY(),
-                finalPosition.GetX(), finalPosition.GetY(),
-                velocidad);
-            return copia;
-        }
-
+    
         // Simula el futuro con copias y devuelve true si en algún momento
         // los dos vuelos están a menos de la distancia de seguridad
         // Utilizamos método de la derivada para simular lo que pasará
@@ -156,15 +241,27 @@ namespace FlightLib
             double dxA = finalPosition.GetX() - currentPosition.GetX();
             double dyA = finalPosition.GetY() - currentPosition.GetY();
             double hipA = Math.Sqrt(dxA * dxA + dyA * dyA);
-            double vxA = (hipA > 0) ? (dxA / hipA) * velocidad : 0;
-            double vyA = (hipA > 0) ? (dyA / hipA) * velocidad : 0;
+
+            double vxA = 0;
+            double vyA = 0;
+            if (hipA > 0)
+            {
+                vxA = (dxA / hipA) * (velocidad / 60.0);
+                vyA = (dyA / hipA) * (velocidad / 60.0);
+            }
 
             // 2. Calculamos las componentes vectoriales (Vx, Vy) del Avión B
             double dxB = b.GetFinalPosition().GetX() - b.GetCurrentPosition().GetX();
             double dyB = b.GetFinalPosition().GetY() - b.GetCurrentPosition().GetY();
             double hipB = Math.Sqrt(dxB * dxB + dyB * dyB);
-            double vxB = (hipB > 0) ? (dxB / hipB) * b.GetVelocidad() : 0;
-            double vyB = (hipB > 0) ? (dyB / hipB) * b.GetVelocidad() : 0;
+
+            double vxB = 0;
+            double vyB = 0;
+            if (hipB > 0)
+            {
+                vxB = (dxB / hipB) * (b.GetVelocidad() / 60.0);
+                vyB = (dyB / hipB) * (b.GetVelocidad() / 60.0);
+            }
 
             // 3. Diferencias de posición y velocidad (A - B)
             double dX0 = currentPosition.GetX() - b.GetCurrentPosition().GetX();
@@ -192,7 +289,8 @@ namespace FlightLib
             double distanciaMinimaAlCuadrado = (distX_min * distX_min) + (distY_min * distY_min);
 
             //Separación total requerida:
-            return distanciaMinimaAlCuadrado < (distanciaSeguridad * distanciaSeguridad);
+            double separacionRequerida = distanciaSeguridad * 2;
+            return distanciaMinimaAlCuadrado < (separacionRequerida*separacionRequerida);
         }
 
         //antes de establecer velocidad, pregunta si queremos 
@@ -230,40 +328,16 @@ namespace FlightLib
             b.SetVelocidad(velocidadOriginal); // Restaurar
             return -1; // No se encontró solución
         }
-        //FASE 11
         //Cambia la velocidad del vuelo b hasta que no haya conflicto.
         //Devuelve true si lo consigue y false si no hay solución:
         public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad)
         {
-            double velocidadOriginal = b.GetVelocidad();
-            int porcentaje;
-
-            // Primero probamos a bajar la velocidad: 95%, 90%, 85% ... 10%
-            porcentaje = 95;
-            while (porcentaje >= 10)
+            double vPropuesta = ObtenerVelocidadPropuesta(b, distanciaSeguridad);
+            if (vPropuesta > 0)
             {
-                b.SetVelocidad(velocidadOriginal * porcentaje / 100);
-                if (this.HabraConflicto(b, distanciaSeguridad) == false)
-                {
-                    return true;
-                }
-                porcentaje = porcentaje - 5;
+                b.SetVelocidad(vPropuesta);
+                return true;
             }
-
-            // Si no funciona, probamos a subirla: 105%, 110% ... 200%
-            porcentaje = 105;
-            while (porcentaje <= 200)
-            {
-                b.SetVelocidad(velocidadOriginal * porcentaje / 100);
-                if (this.HabraConflicto(b, distanciaSeguridad) == false)
-                {
-                    return true;
-                }
-                porcentaje = porcentaje + 5;
-            }
-
-            // No ha habido suerte: dejamos la velocidad como estaba
-            b.SetVelocidad(velocidadOriginal);
             return false;
         }
     }

@@ -39,44 +39,49 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(234, 29);
+            label1.Location = new Point(334, 48);
+            label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new Size(65, 15);
+            label1.Size = new Size(98, 25);
             label1.TabIndex = 0;
             label1.Text = "contraseña";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(60, 32);
+            label2.Location = new Point(86, 53);
+            label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(46, 15);
+            label2.Size = new Size(70, 25);
             label2.TabIndex = 1;
             label2.Text = "usuario";
             // 
             // txtPassword
             // 
             txtPassword.AccessibleName = "txtpassword";
-            txtPassword.Location = new Point(217, 50);
+            txtPassword.Location = new Point(310, 83);
+            txtPassword.Margin = new Padding(4, 5, 4, 5);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(100, 23);
+            txtPassword.Size = new Size(141, 31);
             txtPassword.TabIndex = 2;
             // 
             // txtUsuario
             // 
             txtUsuario.AccessibleName = "txtusuario";
-            txtUsuario.Location = new Point(32, 50);
+            txtUsuario.Location = new Point(46, 83);
+            txtUsuario.Margin = new Padding(4, 5, 4, 5);
             txtUsuario.Name = "txtUsuario";
-            txtUsuario.Size = new Size(100, 23);
+            txtUsuario.Size = new Size(141, 31);
             txtUsuario.TabIndex = 3;
             // 
             // button1
             // 
             button1.AccessibleName = "btnLogin";
-            button1.Location = new Point(32, 79);
+            button1.Location = new Point(46, 132);
+            button1.Margin = new Padding(4, 5, 4, 5);
             button1.Name = "button1";
-            button1.Size = new Size(100, 23);
+            button1.Size = new Size(143, 38);
             button1.TabIndex = 4;
             button1.Text = "Iniciar Sesion";
             button1.UseVisualStyleBackColor = true;
@@ -85,9 +90,10 @@
             // button2
             // 
             button2.AccessibleName = "btnRegistro";
-            button2.Location = new Point(217, 79);
+            button2.Location = new Point(310, 132);
+            button2.Margin = new Padding(4, 5, 4, 5);
             button2.Name = "button2";
-            button2.Size = new Size(100, 23);
+            button2.Size = new Size(143, 38);
             button2.TabIndex = 5;
             button2.Text = "Registrarse";
             button2.UseVisualStyleBackColor = true;
@@ -95,17 +101,19 @@
             // 
             // FormLogin
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(353, 145);
+            ClientSize = new Size(504, 242);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(txtUsuario);
             Controls.Add(txtPassword);
             Controls.Add(label2);
             Controls.Add(label1);
+            Margin = new Padding(4, 5, 4, 5);
             Name = "FormLogin";
             Text = "FormLogIn";
+            Load += FormLogin_Load;
             ResumeLayout(false);
             PerformLayout();
         }

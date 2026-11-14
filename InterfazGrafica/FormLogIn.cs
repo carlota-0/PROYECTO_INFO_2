@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using FlightLib;
 
 namespace InterfazGrafica
 {
@@ -78,6 +79,11 @@ namespace InterfazGrafica
             {
                 MessageBox.Show("Error desconocido al registrar.");
             }
+        }
+
+        private void FormLogin_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

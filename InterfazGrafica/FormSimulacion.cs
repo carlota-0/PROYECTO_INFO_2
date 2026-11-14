@@ -367,16 +367,18 @@ namespace InterfazGrafica
         // 1. ATRIBUTOS
         private double distanciaSeg;
         private FlightPlanList listaVuelos;
-        private double tiempoCiclo = 10;
+        private double tiempoCiclo;
 
         // Creamos una lista para guardar los "dibujitos" (PictureBox) de todos los aviones
         private List<PictureBox> dibujosAviones = new List<PictureBox>();
 
         // 2. CONSTRUCTOR ACTUALIZADO: Recibe la lista desde Form1
-        public FormSimulacion(FlightPlanList listaVuelos, double distancia)
+        public FormSimulacion(FlightPlanList listaVuelos, double distancia, double tiempoCiclo)
         {
             this.listaVuelos = listaVuelos;
             this.distanciaSeg = distancia;
+            this.tiempoCiclo = tiempoCiclo;
+
 
             InitializeComponent();
             ConfigurarAviones();
@@ -494,17 +496,42 @@ namespace InterfazGrafica
             ReiniciarSimulacion();
         }
 
-        // FASE 5: Consultamos info al hacer clic en un avion
+        //Muestra los datos del vuelo clicado (ID, compañía, velocidad, posición) y la distancia con todos los demás
         private void avion_Click(object sender, EventArgs e)
         {
             PictureBox avionClicado = (PictureBox)sender;
-            FlightPlan plan = (FlightPlan)avionClicado.Tag;
+            FlightPlan planSeleccionado = (FlightPlan)avionClicado.Tag;
+            string info  = "DATOS DEL VUELO\n" +
+                  "----------------------------------------\n" +
+                  "Identificador: " + planSeleccionado.GetId() + "\n" +
+                  "Compañía: " + planSeleccionado.GetCompany() + "\n" +
+                  "Velocidad: " + planSeleccionado.GetVelocidad().ToString("F2") + "\n" +
+                  "Posición actual: (" + planSeleccionado.GetCurrentPosition().GetX().ToString("F2") + ", " +
+                                         planSeleccionado.GetCurrentPosition().GetY().ToString("F2") + ")\n\n" +
+                  "DISTANCIA CON OTROS VUELOS\n" +
+                  "----------------------------------------\n";
 
-            string info = $"Identificador: {plan.GetId()}\n" +
-                          $"Velocidad: {plan.GetVelocidad():F2}\n" +
-                          $"Posición actual: ({plan.GetCurrentPosition().GetX():F2}, {plan.GetCurrentPosition().GetY():F2})";
+            int i = 0;
+            int otrosVuelos = 0;
+            while (i < listaVuelos.GetCount())
+            {
+                FlightPlan otroPlan = listaVuelos.GetFlightPlan(i);
+                if (otroPlan != null && otroPlan != planSeleccionado)
+                {
+                    double d = planSeleccionado.Distancia(otroPlan);
+                    info = info + "• " + otroPlan.GetId() + " (" + otroPlan.GetCompany() + "): " + d.ToString("F2") + "\n";
+                    otrosVuelos++;
+                }
+                i++;
+            }
+            if (otrosVuelos == 0)
+            {
+                info = info + "No hay otros vuelos en el sector.";
+            }
 
-            MessageBox.Show(info, "Información del Vuelo");
+            // 4. Mostramos el cuadro con toda la información
+            MessageBox.Show(info, "Información y Distancias - " + planSeleccionado.GetId(), MessageBoxButtons.OK, MessageBoxIcon.Information);
+
         }
 
         // 5. EVENTO PAINT: Dibuja las líneas y radios de seguridad de TODA la lista
@@ -655,28 +682,6 @@ namespace InterfazGrafica
             MessageBox.Show("Funcionalidad deshabilitada para listas en V2.", "Aviso");
         }
 
-        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            timerSimulador.Stop();
-        }
-
-        private void FormSimulacion_Load(object sender, EventArgs e)
-        {
-            double anchoPanel = panelEspacioAereo.Width;
-            double altoPanel = panelEspacioAereo.Height;
-
-            for (int i = 0; i < listaVuelos.GetCount(); i++)
-            {
-                FlightPlan plan = listaVuelos.GetFlightPlan(i);
-                if (plan != null)
-                {
-                    plan.ExtenderHastaBordeSector(anchoPanel, altoPanel);
-                }
-            }
-
-            panelEspacioAereo.Invalidate();
-        }
-
         private void btnAplicarVel_Click(object sender, EventArgs e)
         {
             PararAutomatica();
@@ -737,6 +742,51 @@ namespace InterfazGrafica
             }
 
             MessageBox.Show(mensaje, "Predicción");
+        }
+
+        private void btn_Deshacer_Click(object sender, EventArgs e)
+        {
+            {
+                PararAutomatica();
+                bool seDeshizo = listaVuelos.DeshacerPaso();
+
+                if (seDeshizo)
+                {
+                    int i = 0;
+                    while (i < listaVuelos.GetCount())
+                    {
+                        FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                        dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
+                        i++;
+                    }
+                    panelEspacioAereo.Invalidate();
+                }
+                else
+                {
+                    MessageBox.Show("No hay pasos anteriores para deshacer.");
+                }
+            }
+        }
+        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            timerSimulador.Stop();
+        }
+
+        private void FormSimulacion_Load(object sender, EventArgs e)
+        {
+            double anchoPanel = panelEspacioAereo.Width;
+            double altoPanel = panelEspacioAereo.Height;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
+                    plan.ExtenderHastaBordeSector(anchoPanel, altoPanel);
+                }
+            }
+
+            panelEspacioAereo.Invalidate();
         }
     }
 }

@@ -44,11 +44,13 @@ namespace InterfazGrafica
         private void btnDefecto_Click(object sender, EventArgs e)
         {
             textID1.Text = "IBE123";
+            textCompania1.Text = "Iberia";
             Ini1.Text = "50,50";
             Fin1.Text = "400,300";
             textVelocidad1.Text = "150";
 
             textID2.Text = "RYR456";
+            textCompania2.Text = "Ryanair";
             Ini2.Text = "400,50";
             Fin2.Text = "50,300";
             textVelocidad2.Text = "150";
@@ -69,6 +71,13 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 1: ID vacía, escribe un identificador");
                 return;
 
+            }
+
+            string comp1 = textCompania1.Text.Trim();
+            if (comp1 == "")
+            {
+                MessageBox.Show("Vuelo 1: Compañía vacía, escribe una compañía.");
+                return;
             }
 
             //POSICION INICIAL (x,y)
@@ -147,6 +156,12 @@ namespace InterfazGrafica
                 return;
 
             }
+            string comp2 = textCompania2.Text.Trim();
+            if (comp2 == "")
+            {
+                MessageBox.Show("Vuelo 2: Compañía vacía, escribe una compañía.");
+                return;
+            }
 
             //POSICION INICIAL (x,y)
             string[] ini2 = Ini2.Text.Split(",");
@@ -220,8 +235,8 @@ namespace InterfazGrafica
                 return;
             }
 
-            Plan1 = new FlightPlan(id1, x1, y1, xf1, yf1, vel1);
-            Plan2 = new FlightPlan(id2, x2, y2, xf2, yf2, vel2);
+            Plan1 = new FlightPlan(id1, comp1, x1, y1, xf1, yf1, vel1);
+            Plan2 = new FlightPlan(id2, comp2, x2, y2, xf2, yf2, vel2);
 
             DialogResult = DialogResult.OK;
             Close();

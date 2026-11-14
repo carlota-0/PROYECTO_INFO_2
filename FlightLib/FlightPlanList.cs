@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ namespace FlightLib
 {
     public class FlightPlanList
     {
-        //VERSION 2
         private List<FlightPlan> lista = new List<FlightPlan>();
 
         // Añade el vuelo y devuelve el índice donde lo ha guardado
@@ -54,7 +54,103 @@ namespace FlightLib
             }
         }
 
-     
+        // Deshace el último paso de todos los vuelos de la lista; devuelve true si había pasos para deshacer
+        public bool DeshacerPaso()
+        {
+            bool deshecho = false;
+            int i = 0;
+            while (i < lista.Count)
+            {
+                if (lista[i].DeshacerPaso())
+                {
+                    deshecho = true;
+                }
+                i++;
+            }
+            return deshecho;
+        }
+
+        // Lee los planes de vuelo desde un archivo de texto (parámetro: ruta del archivo)
+        public void CargarDesdeArchivo(string rutaArchivo)
+        {
+            if (!File.Exists(rutaArchivo))
+            {
+                throw new FileNotFoundException("No se encuentra el archivo especificado.");
+            }
+
+            List<FlightPlan> nuevaLista = new List<FlightPlan>();
+            StreamReader r = new StreamReader(rutaArchivo);
+            string linea = r.ReadLine();
+
+            try
+            {
+                while (linea != null)
+                {
+                    if (linea.StartsWith("//") || linea.Trim() == "")
+                    {
+                        linea = r.ReadLine();
+                        continue;
+                    }
+
+                    string[] trozos = linea.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (trozos.Length != 7)
+                    {
+                        throw new FormatException("Cada línea debe contener 7 campos: ID Compañía X0 Y0 Xf Yf Velocidad.");
+                    }
+
+                    string id = trozos[0];
+                    string company = trozos[1];
+                    double ix = Convert.ToDouble(trozos[2]);
+                    double iy = Convert.ToDouble(trozos[3]);
+                    double fx = Convert.ToDouble(trozos[4]);
+                    double fy = Convert.ToDouble(trozos[5]);
+                    double vel = Convert.ToDouble(trozos[6]);
+
+                    if (vel <= 0)
+                    {
+                        throw new FormatException("La velocidad de todos los vuelos debe ser mayor que 0.");
+                    }
+
+                    FlightPlan avion = new FlightPlan(id, company, ix, iy, fx, fy, vel);
+                    nuevaLista.Add(avion);
+                    linea = r.ReadLine();
+                }
+            }
+            finally
+            {
+                r.Close();
+            }
+
+            this.lista = nuevaLista;
+        }
+
+        // Guarda el estado actual de todos los vuelos en un archivo de texto (parámetro: ruta del archivo)
+        public void GuardarEnArchivo(string rutaArchivo)
+        {
+            StreamWriter w = new StreamWriter(rutaArchivo);
+            try
+            {
+                int i = 0;
+                while (i < lista.Count)
+                {
+                    FlightPlan p = lista[i];
+                    // Se guarda CurrentPosition como posición de partida para poder reanudar después
+                    string linea = p.GetId() + " " +
+                                   p.GetCompany() + " " +
+                                   p.GetCurrentPosition().GetX() + " " +
+                                   p.GetCurrentPosition().GetY() + " " +
+                                   p.GetFinalPosition().GetX() + " " +
+                                   p.GetFinalPosition().GetY() + " " +
+                                   p.GetVelocidad();
+                    w.WriteLine(linea);
+                    i++;
+                }
+            }
+            finally
+            {
+                w.Close();
+            }
+        }
         public List<string> DetectarConflictos(double distanciaSeguridad)
         {
             List<string> conflictos = new List<string>();

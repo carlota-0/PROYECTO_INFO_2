@@ -90,5 +90,10 @@ namespace InterfazGrafica
             Close();
             lista.Restart();
         }
+
+        private void FormVelocidades_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

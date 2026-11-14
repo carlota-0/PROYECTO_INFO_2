@@ -46,6 +46,9 @@
             btnAceptar = new Button();
             btnCancelar = new Button();
             btnDefecto = new Button();
+            label1 = new Label();
+            textCompania1 = new TextBox();
+            textCompania2 = new TextBox();
             SuspendLayout();
             // 
             // Vuelo1
@@ -69,7 +72,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(181, 71);
+            label3.Location = new Point(189, 68);
             label3.Name = "label3";
             label3.Size = new Size(30, 25);
             label3.TabIndex = 2;
@@ -78,7 +81,7 @@
             // XYinicial
             // 
             XYinicial.AutoSize = true;
-            XYinicial.Location = new Point(297, 71);
+            XYinicial.Location = new Point(446, 68);
             XYinicial.Name = "XYinicial";
             XYinicial.Size = new Size(91, 25);
             XYinicial.TabIndex = 3;
@@ -87,7 +90,7 @@
             // XYfinal
             // 
             XYfinal.AutoSize = true;
-            XYfinal.Location = new Point(427, 71);
+            XYfinal.Location = new Point(578, 68);
             XYfinal.Name = "XYfinal";
             XYfinal.Size = new Size(81, 25);
             XYfinal.TabIndex = 4;
@@ -96,7 +99,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(539, 71);
+            label6.Location = new Point(709, 68);
             label6.Name = "label6";
             label6.Size = new Size(89, 25);
             label6.TabIndex = 5;
@@ -104,56 +107,56 @@
             // 
             // textID1
             // 
-            textID1.Location = new Point(147, 106);
+            textID1.Location = new Point(155, 103);
             textID1.Name = "textID1";
             textID1.Size = new Size(104, 31);
             textID1.TabIndex = 6;
             // 
             // textID2
             // 
-            textID2.Location = new Point(147, 161);
+            textID2.Location = new Point(155, 158);
             textID2.Name = "textID2";
             textID2.Size = new Size(104, 31);
             textID2.TabIndex = 7;
             // 
             // textVelocidad2
             // 
-            textVelocidad2.Location = new Point(539, 161);
+            textVelocidad2.Location = new Point(709, 158);
             textVelocidad2.Name = "textVelocidad2";
             textVelocidad2.Size = new Size(104, 31);
             textVelocidad2.TabIndex = 8;
             // 
             // textVelocidad1
             // 
-            textVelocidad1.Location = new Point(539, 106);
+            textVelocidad1.Location = new Point(709, 103);
             textVelocidad1.Name = "textVelocidad1";
             textVelocidad1.Size = new Size(104, 31);
             textVelocidad1.TabIndex = 9;
             // 
             // Fin2
             // 
-            Fin2.Location = new Point(408, 161);
+            Fin2.Location = new Point(578, 158);
             Fin2.Name = "Fin2";
             Fin2.Size = new Size(104, 31);
             Fin2.TabIndex = 10;
             // 
             // Fin1
             // 
-            Fin1.Location = new Point(408, 106);
+            Fin1.Location = new Point(578, 103);
             Fin1.Name = "Fin1";
             Fin1.Size = new Size(104, 31);
             Fin1.TabIndex = 11;
             // 
             // Ini2
             // 
-            Ini2.Location = new Point(276, 161);
+            Ini2.Location = new Point(446, 158);
             Ini2.Name = "Ini2";
             Ini2.Size = new Size(104, 31);
             Ini2.TabIndex = 12;
             // 
             // Ini1
             // 
-            Ini1.Location = new Point(276, 106);
+            Ini1.Location = new Point(446, 103);
             Ini1.Name = "Ini1";
             Ini1.Size = new Size(104, 31);
             Ini1.TabIndex = 13;
@@ -186,11 +189,37 @@
             btnDefecto.Text = "Por defecto";
             btnDefecto.Click += btnDefecto_Click;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(298, 68);
+            label1.Name = "label1";
+            label1.Size = new Size(93, 25);
+            label1.TabIndex = 16;
+            label1.Text = "Compañía";
+            // 
+            // textCompania1
+            // 
+            textCompania1.Location = new Point(282, 103);
+            textCompania1.Name = "textCompania1";
+            textCompania1.Size = new Size(137, 31);
+            textCompania1.TabIndex = 17;
+            // 
+            // textCompania2
+            // 
+            textCompania2.Location = new Point(282, 161);
+            textCompania2.Name = "textCompania2";
+            textCompania2.Size = new Size(137, 31);
+            textCompania2.TabIndex = 18;
+            // 
             // FormPlanesVuelo
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(702, 334);
+            ClientSize = new Size(857, 334);
+            Controls.Add(textCompania2);
+            Controls.Add(textCompania1);
+            Controls.Add(label1);
             Controls.Add(btnDefecto);
             Controls.Add(btnCancelar);
             Controls.Add(btnAceptar);
@@ -234,5 +263,8 @@
         private Button btnAceptar;
         private Button btnCancelar;
         private Button btnDefecto;
+        private Label label1;
+        private TextBox textCompania1;
+        private TextBox textCompania2;
     }
 }

@@ -65,7 +65,7 @@ namespace InterfazGrafica
                 return; 
             }
             //Li passem la llista sencera d'avions al simualdor
-            FormSimulacion formSim = new FormSimulacion(listaVuelos, this.distanciaSeguridad);
+            FormSimulacion formSim = new FormSimulacion(listaVuelos, this.distanciaSeguridad, this.tiempoCiclo);
             formSim.ShowDialog();
         }
 
@@ -83,42 +83,20 @@ namespace InterfazGrafica
             {
                 try
                 {
-                    StreamReader r = new StreamReader(ofd.FileName);
-                    string linea = r.ReadLine();
-
-                    while (linea != null)
-                    {
-                        if (linea.StartsWith("//") || linea.Trim() == "")
-                        {
-                            linea = r.ReadLine();
-                            continue;
-                        }
-                        string[] trozos = linea.Split(' ');
-
-                        string id = trozos[0];
-                        double ix = Convert.ToDouble(trozos[1]);
-                        double iy = Convert.ToDouble(trozos[2]);
-                        double fx = Convert.ToDouble(trozos[3]);
-                        double fy = Convert.ToDouble(trozos[4]);
-                        double vel = Convert.ToDouble(trozos[5]);
-
-                        FlightPlan avion = new FlightPlan(id, ix, iy, fx, fy, vel);
-
-                       listaVuelos.AddFlightPlan(avion);
-
-                        linea = r.ReadLine();
-                    }
-
-                    r.Close();
+                    listaVuelos.CargarDesdeArchivo(ofd.FileName);
                     MessageBox.Show("¡Vuelos cargados correctamente!");
                 }
-                catch (FormatException)
+                catch (FormatException ex)
                 {
-                    MessageBox.Show("Error: El fichero tiene un formato incorrecto.");
+                    MessageBox.Show("Error de formato en el fichero: " + ex.Message);
                 }
                 catch (FileNotFoundException)
                 {
                     MessageBox.Show("Error: No se ha encontrado el fichero.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al cargar el fichero: " + ex.Message);
                 }
             }
         }
