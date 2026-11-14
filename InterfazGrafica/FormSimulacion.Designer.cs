@@ -39,6 +39,7 @@ namespace InterfazGrafica
             timerSimulador = new System.Windows.Forms.Timer(components);
             lblEstadoAlarma = new Label();
             btnAplicarVel = new Button();
+            btnPredecir = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -116,9 +117,20 @@ namespace InterfazGrafica
             btnAplicarVel.UseVisualStyleBackColor = true;
             btnAplicarVel.Click += btnAplicarVel_Click;
             // 
+            // btnPredecir
+            // 
+            btnPredecir.Location = new Point(1049, 190);
+            btnPredecir.Name = "btnPredecir";
+            btnPredecir.Size = new Size(278, 123);
+            btnPredecir.TabIndex = 5;
+            btnPredecir.Text = "Predecir Conflicto";
+            btnPredecir.UseVisualStyleBackColor = true;
+            btnPredecir.Click += btnPredecir_Click;
+            // 
             // FormSimulacion
             // 
-            ClientSize = new Size(1599, 909);
+            ClientSize = new Size(1655, 909);
+            Controls.Add(btnPredecir);
             Controls.Add(btnAplicarVel);
             Controls.Add(lblEstadoAlarma);
             Controls.Add(btnDetener);
@@ -143,5 +155,6 @@ namespace InterfazGrafica
         private System.Windows.Forms.Timer timerSimulador;
         private Label lblEstadoAlarma;
         private Button btnAplicarVel;
+        private Button btnPredecir;
     }
 }

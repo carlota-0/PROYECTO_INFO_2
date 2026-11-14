@@ -639,7 +639,7 @@ namespace InterfazGrafica
             btnDetener.Enabled = true;
             btnMover.Enabled = false;
         }
-       
+
         private void btnDetener_Click(object sender, EventArgs e)
         {
             PararAutomatica();
@@ -690,5 +690,53 @@ namespace InterfazGrafica
             }
         }
 
+        private void btnPredecir_Click(object sender, EventArgs e)
+        {
+            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
+
+            // Si no hay conflictos, no hay nada que proponer
+            if (conflictos.Count == 0)
+            {
+                MessageBox.Show("No se producirá ningún conflicto.", "Predicción");
+                return;
+            }
+
+            // 1. Parejas que entran en conflicto
+            string mensaje = "Se produce conflicto entre:\n";
+            for (int i = 0; i < conflictos.Count; i++)
+            {
+                mensaje += "• " + conflictos[i] + "\n";
+            }
+
+            // 2. Calculamos las velocidades propuestas (no cambia nada de verdad)
+            bool resuelto;
+            double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
+
+            // 3. Velocidades propuestas: solo los vuelos que cambiarían
+            mensaje += "\nVelocidades propuestas:\n";
+            bool hayCambios = false;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+
+                if (Math.Abs(propuestas[i] - plan.GetVelocidad()) > 0.001)
+                {
+                    mensaje += "• " + plan.GetId() + ": " + propuestas[i].ToString("F2") + "\n";
+                    hayCambios = true;
+                }
+            }
+
+            if (!hayCambios)
+            {
+                mensaje += "(no se ha encontrado ninguna solución)\n";
+            }
+            else if (!resuelto)
+            {
+                mensaje += "\nAviso: aun con estas velocidades quedarían conflictos sin resolver.\n";
+            }
+
+            MessageBox.Show(mensaje, "Predicción");
+        }
     }
 }
