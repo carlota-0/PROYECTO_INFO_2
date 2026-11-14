@@ -61,7 +61,7 @@ namespace InterfazGrafica
         {
             if (listaVuelos.GetFlightPlan(0) == null)
             {
-                MessageBox.Show(" favor, introduce o carga primero los planes de vuelo");
+                MessageBox.Show(" Porfavor, introduce o carga primero los planes de vuelo");
                 return; 
             }
             //Li passem la llista sencera d'avions al simualdor

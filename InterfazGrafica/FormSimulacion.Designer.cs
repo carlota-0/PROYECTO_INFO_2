@@ -38,6 +38,7 @@ namespace InterfazGrafica
             btnDetener = new Button();
             timerSimulador = new System.Windows.Forms.Timer(components);
             lblEstadoAlarma = new Label();
+            btnAplicarVel = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -105,9 +106,20 @@ namespace InterfazGrafica
             lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
             lblEstadoAlarma.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // btnAplicarVel
+            // 
+            btnAplicarVel.Location = new Point(1049, 45);
+            btnAplicarVel.Name = "btnAplicarVel";
+            btnAplicarVel.Size = new Size(278, 123);
+            btnAplicarVel.TabIndex = 4;
+            btnAplicarVel.Text = "Cambiar velocidades y reiniciar";
+            btnAplicarVel.UseVisualStyleBackColor = true;
+            btnAplicarVel.Click += btnAplicarVel_Click;
+            // 
             // FormSimulacion
             // 
             ClientSize = new Size(1599, 909);
+            Controls.Add(btnAplicarVel);
             Controls.Add(lblEstadoAlarma);
             Controls.Add(btnDetener);
             Controls.Add(btnAuto);
@@ -130,5 +142,6 @@ namespace InterfazGrafica
         private Button btnDetener;
         private System.Windows.Forms.Timer timerSimulador;
         private Label lblEstadoAlarma;
+        private Button btnAplicarVel;
     }
 }

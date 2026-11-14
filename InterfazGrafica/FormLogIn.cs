@@ -33,7 +33,7 @@ namespace InterfazGrafica
 
             if (correcto)
             {
-                MessageBox.Show("¡Bienvenido " + user + "!");
+                MessageBox.Show("¡Bienvenid@ " + user + "!");
 
                 // Abrimos tu menú principal de la Versión 0 (Form1)
                 Form1 menuPrincipal = new Form1();

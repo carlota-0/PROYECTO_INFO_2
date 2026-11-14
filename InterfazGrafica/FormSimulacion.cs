@@ -580,13 +580,66 @@ namespace InterfazGrafica
 
         private void btnAuto_Click(object sender, EventArgs e)
         {
+            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
+
+            if (conflictos.Count > 0)
+            {
+                bool resuelto;
+                double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
+
+                string mensaje = "Conflictos detectados:\n";
+                for (int i = 0; i < conflictos.Count; i++)
+                    mensaje += "• " + conflictos[i] + "\n";
+
+                mensaje += "\nCambios de velocidad propuestos:\n";
+                bool hayCambios = false;
+                for (int i = 0; i < listaVuelos.GetCount(); i++)
+                {
+                    FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                    if (Math.Abs(propuestas[i] - plan.GetVelocidad()) > 0.001)
+                    {
+                        mensaje += "• " + plan.GetId() + ": " + plan.GetVelocidad().ToString("F2")
+                                 + " → " + propuestas[i].ToString("F2") + "\n";
+                        hayCambios = true;
+                    }
+                }
+
+                if (!hayCambios)
+                {
+                    mensaje += "(ninguno: no se ha encontrado solución)\n\n¿Iniciar la simulación igualmente?";
+                    if (MessageBox.Show(mensaje, "Conflictos detectados", MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning) == DialogResult.No)
+                        return;
+                }
+                else
+                {
+                    if (!resuelto)
+                        mensaje += "\nAviso: aun con estos cambios quedarían conflictos sin resolver.\n";
+
+                    mensaje += "\nSí = aplicar los cambios\nNo = iniciar sin cambiar nada\nCancelar = no iniciar";
+
+                    DialogResult r = MessageBox.Show(mensaje, "Conflictos detectados",
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                    if (r == DialogResult.Cancel)
+                        return;
+
+                    if (r == DialogResult.Yes)
+                    {
+                        for (int i = 0; i < listaVuelos.GetCount(); i++)
+                            listaVuelos.GetFlightPlan(i).SetVelocidad(propuestas[i]);
+                    }
+                }
+            }
+
             // Para la Versión 2, simplificamos el automático para que funcione con N aviones
+            // Anticipamos los conflictos antes de empezar
             timerSimulador.Start();
             btnAuto.Enabled = false;
             btnDetener.Enabled = true;
             btnMover.Enabled = false;
         }
-
+       
         private void btnDetener_Click(object sender, EventArgs e)
         {
             PararAutomatica();
@@ -622,6 +675,19 @@ namespace InterfazGrafica
             }
 
             panelEspacioAereo.Invalidate();
+        }
+
+        private void btnAplicarVel_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+
+            FormVelocidades f = new FormVelocidades(listaVuelos);
+            f.ShowDialog();
+
+            if (f.HaAplicado())
+            {
+                ReiniciarSimulacion();
+            }
         }
 
     }

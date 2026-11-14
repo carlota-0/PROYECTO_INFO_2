@@ -145,7 +145,7 @@ namespace FlightLib
         // Simula el futuro con copias y devuelve true si en algún momento
         // los dos vuelos están a menos de la distancia de seguridad
         // Utilizamos método de la derivada para simular lo que pasará
-        public bool HabraConflicto(FlightPlan b, double distanciaSeguridad, double paso)
+        public bool HabraConflicto(FlightPlan b, double distanciaSeguridad)
         {
             
             // Si ya están en conflicto ahora mismo, devolvemos true
@@ -196,7 +196,7 @@ namespace FlightLib
         }
 
         //antes de establecer velocidad, pregunta si queremos 
-        public double ObtenerVelocidadPropuesta(FlightPlan b, double distanciaSeguridad, double paso)
+        public double ObtenerVelocidadPropuesta(FlightPlan b, double distanciaSeguridad)
         {
             double velocidadOriginal = b.GetVelocidad();
             int porcentaje;
@@ -206,7 +206,7 @@ namespace FlightLib
             while (porcentaje >= 10)
             {
                 b.SetVelocidad(velocidadOriginal * porcentaje / 100.0);
-                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                if (this.HabraConflicto(b, distanciaSeguridad) == false)
                 {
                     b.SetVelocidad(velocidadOriginal); // Restaurar
                     return velocidadOriginal * porcentaje / 100.0;
@@ -219,7 +219,7 @@ namespace FlightLib
             while (porcentaje <= 200)
             {
                 b.SetVelocidad(velocidadOriginal * porcentaje / 100.0);
-                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                if (this.HabraConflicto(b, distanciaSeguridad) == false)
                 {
                     b.SetVelocidad(velocidadOriginal); // Restaurar
                     return velocidadOriginal * porcentaje / 100.0;
@@ -233,7 +233,7 @@ namespace FlightLib
         //FASE 11
         //Cambia la velocidad del vuelo b hasta que no haya conflicto.
         //Devuelve true si lo consigue y false si no hay solución:
-        public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad, double paso)
+        public bool ResolverConflicto(FlightPlan b, double distanciaSeguridad)
         {
             double velocidadOriginal = b.GetVelocidad();
             int porcentaje;
@@ -243,7 +243,7 @@ namespace FlightLib
             while (porcentaje >= 10)
             {
                 b.SetVelocidad(velocidadOriginal * porcentaje / 100);
-                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                if (this.HabraConflicto(b, distanciaSeguridad) == false)
                 {
                     return true;
                 }
@@ -255,7 +255,7 @@ namespace FlightLib
             while (porcentaje <= 200)
             {
                 b.SetVelocidad(velocidadOriginal * porcentaje / 100);
-                if (this.HabraConflicto(b, distanciaSeguridad, paso) == false)
+                if (this.HabraConflicto(b, distanciaSeguridad) == false)
                 {
                     return true;
                 }
