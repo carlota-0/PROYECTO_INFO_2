@@ -1,6 +1,7 @@
-- cuando hay conflictos cambiar color de los aviones o algo HECHO
-- antes de decrile que si que quiero cambiar la velocidad saber la magnitud del cambio, es decir hasta qué velocidad HECHO
-- vuelos lleguen al borde del panel HECHO creo
-- alternativa para lista de vuelos cambiar las velocidades de todos los vuelos en una tabla
-  
-  
+- Permite deshacer el último paso de la simulación utilizando Stack< > como estructura de datos para realizar la operación.
+- Paramos la simulación, clicamos un vuelo y necesitamos que muestre la distancia de ese momento con todos los otros vuelos
+- Paramos la simulación en un momento dado y hacemos que se guarde la lista tal como la hemos parado para que cuando volvamos a entrar se muestre como lo hemos guardado
+- gestión usuarios en la librería de clases en vez de la interfaz gráfica.
+- meter el código de la lectura del doc con los vuelos en la clase de flight plan list.
+- ultimo punto de check list. poder guardar los datos de la simulación dejada a la mitad .
+- al parar la simulación en un momento, poder ver la distancia de un vuelo con los demás.
