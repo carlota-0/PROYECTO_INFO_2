@@ -7,5 +7,7 @@
 - Hacer prueba de detección de errores y ver que el programa no se cuelga (esta en la CHECKLIST)
 - Ordenar el código
 - Hacer vídeo V2
+
+- Hacer que cuando nos proponga las velocidades para cambiar podamos aceptar alguna y denegar otra
   
 
