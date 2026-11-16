@@ -41,6 +41,7 @@ namespace InterfazGrafica
             btnAplicarVel = new Button();
             btnPredecir = new Button();
             btnDeshacer = new Button();
+            btnGuardar = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -138,9 +139,20 @@ namespace InterfazGrafica
             btnDeshacer.UseVisualStyleBackColor = true;
             btnDeshacer.Click += btn_Deshacer_Click;
             // 
+            // btnGuardar
+            // 
+            btnGuardar.Location = new Point(1049, 337);
+            btnGuardar.Name = "btnGuardar";
+            btnGuardar.Size = new Size(278, 125);
+            btnGuardar.TabIndex = 7;
+            btnGuardar.Text = "Guardar Simulación Actual ";
+            btnGuardar.UseVisualStyleBackColor = true;
+            btnGuardar.Click += btnGuardar_Click;
+            // 
             // FormSimulacion
             // 
             ClientSize = new Size(1655, 828);
+            Controls.Add(btnGuardar);
             Controls.Add(btnDeshacer);
             Controls.Add(btnPredecir);
             Controls.Add(btnAplicarVel);
@@ -169,5 +181,6 @@ namespace InterfazGrafica
         private Button btnAplicarVel;
         private Button btnPredecir;
         private Button btnDeshacer;
+        private Button btnGuardar;
     }
 }

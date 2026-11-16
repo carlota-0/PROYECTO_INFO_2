@@ -501,7 +501,7 @@ namespace InterfazGrafica
         {
             PictureBox avionClicado = (PictureBox)sender;
             FlightPlan planSeleccionado = (FlightPlan)avionClicado.Tag;
-            string info  = "DATOS DEL VUELO\n" +
+            string info = "DATOS DEL VUELO\n" +
                   "----------------------------------------\n" +
                   "Identificador: " + planSeleccionado.GetId() + "\n" +
                   "Compañía: " + planSeleccionado.GetCompany() + "\n" +
@@ -787,6 +787,31 @@ namespace InterfazGrafica
             }
 
             panelEspacioAereo.Invalidate();
+        }
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            // 1. Pausar el temporizador para que los aviones se queden quietos mientras guardas
+            timerSimulador.Stop();
+
+            // 2. Preparar la ventanita para elegir dónde guardar
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Archivos de texto (*.txt)|*.txt";
+            sfd.Title = "Guardar estado de la simulación";
+            sfd.FileName = "Vuelos_Guardados.txt"; 
+
+            // 3. Si el usuario le da a "Guardar"
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                // Llamamos a tu función de guardado
+                // (Asegúrate de que 'milista' sea el nombre de tu variable FlightPlanList en este Form)
+                listaVuelos.GuardarEnArchivo(sfd.FileName);
+
+                MessageBox.Show("Simulación guardada correctamente.");
+            }
+
+            // 4. Como no salimos del programa, tenemos que reanudar el vuelo.
+            // Esto se ejecuta tanto si guarda como si cancela la ventana.
+            timerSimulador.Start();
         }
     }
 }
