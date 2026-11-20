@@ -42,6 +42,7 @@ namespace InterfazGrafica
             btnPredecir = new Button();
             btnDeshacer = new Button();
             btnGuardar = new Button();
+            btnListaVuelos = new Button();
             SuspendLayout();
             // 
             // panelEspacioAereo
@@ -111,7 +112,7 @@ namespace InterfazGrafica
             // 
             // btnAplicarVel
             // 
-            btnAplicarVel.Location = new Point(1049, 45);
+            btnAplicarVel.Location = new Point(1049, 20);
             btnAplicarVel.Name = "btnAplicarVel";
             btnAplicarVel.Size = new Size(278, 123);
             btnAplicarVel.TabIndex = 4;
@@ -121,7 +122,7 @@ namespace InterfazGrafica
             // 
             // btnPredecir
             // 
-            btnPredecir.Location = new Point(1049, 190);
+            btnPredecir.Location = new Point(1049, 172);
             btnPredecir.Name = "btnPredecir";
             btnPredecir.Size = new Size(278, 123);
             btnPredecir.TabIndex = 5;
@@ -141,7 +142,7 @@ namespace InterfazGrafica
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new Point(1049, 337);
+            btnGuardar.Location = new Point(1051, 325);
             btnGuardar.Name = "btnGuardar";
             btnGuardar.Size = new Size(278, 125);
             btnGuardar.TabIndex = 7;
@@ -149,9 +150,20 @@ namespace InterfazGrafica
             btnGuardar.UseVisualStyleBackColor = true;
             btnGuardar.Click += btnGuardar_Click;
             // 
+            // btnListaVuelos
+            // 
+            btnListaVuelos.Location = new Point(1049, 475);
+            btnListaVuelos.Name = "btnListaVuelos";
+            btnListaVuelos.Size = new Size(280, 125);
+            btnListaVuelos.TabIndex = 8;
+            btnListaVuelos.Text = "Lista de Vuelos";
+            btnListaVuelos.UseVisualStyleBackColor = true;
+            btnListaVuelos.Click += btnListaVuelos_Click;
+            // 
             // FormSimulacion
             // 
             ClientSize = new Size(1655, 828);
+            Controls.Add(btnListaVuelos);
             Controls.Add(btnGuardar);
             Controls.Add(btnDeshacer);
             Controls.Add(btnPredecir);
@@ -182,5 +194,6 @@ namespace InterfazGrafica
         private Button btnPredecir;
         private Button btnDeshacer;
         private Button btnGuardar;
+        private Button btnListaVuelos;
     }
 }
