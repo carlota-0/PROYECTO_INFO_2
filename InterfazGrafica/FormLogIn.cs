@@ -1,20 +1,45 @@
-﻿using System;
+﻿using FlightLib;
+using System;
 using System.Windows.Forms;
-using FlightLib;
 
 namespace InterfazGrafica
 {
     public partial class FormLogin : Form
     {
+        private GestionUsuarios gestion = new GestionUsuarios();
+
+        //Inicializa los componentes del formulario de acceso
         public FormLogin()
         {
             InitializeComponent();
         }
 
-        // Clic en Iniciar Sesión
+        //Comprueba al cargar el formulario que la base de datos de usuarios existe y es accesible
+        private void FormLogin_Load(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (!gestion.Iniciar())
+                {
+                    MessageBox.Show("Error: No se encuentra el fichero de la base de datos (usuarios.db).");
+                    Application.Exit();
+                    return;
+                }
+                gestion.Cerrar();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir la base de datos: " + ex.Message);
+                Application.Exit();
+            } 
+
+        }
+
+        //Valida si son correctas los datos introducidos y abre el menú principal 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            // Cogemos lo que el usuario ha escrito
             string user = txtUsuario.Text.Trim();
             string pass = txtPassword.Text.Trim();
 
@@ -24,31 +49,39 @@ namespace InterfazGrafica
                 return;
             }
 
-            // Usamos la clase que creamos antes
-            GestionUsuarios gestion = new GestionUsuarios();
-            gestion.Iniciar();
-
-            bool correcto = gestion.ComprobarLogin(user, pass);
-
-            gestion.Cerrar();
-
-            if (correcto)
+            try
             {
-                MessageBox.Show("¡Bienvenid@ " + user + "!");
+                if (!gestion.Iniciar())
+                {
+                    MessageBox.Show("Error: No se encuentra el fichero de la base de datos (usuarios.db).");
+                    return;
+                }
 
-                // Abrimos tu menú principal de la Versión 0 (Form1)
-                Form1 menuPrincipal = new Form1();
-                this.Hide(); // Ocultamos la ventana de login
-                menuPrincipal.ShowDialog(); // Esperamos a que cierre el menú principal
-                this.Close(); // Cerramos el programa entero
+                bool correcto = gestion.ComprobarLogin(user, pass);
+                gestion.Cerrar();
+
+                if (correcto)
+                {
+                    MessageBox.Show("¡Bienvenid@ " + user + "!");
+                    Form1 menuPrincipal = new Form1();
+                    this.Hide();
+                    menuPrincipal.ShowDialog();
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Usuario o contraseña incorrectos.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Usuario o contraseña incorrectos.");
+                gestion.Cerrar();
+                MessageBox.Show("Error al acceder a la base de datos: " + ex.Message);
             }
+
         }
 
-        // Clic en Registrarse
+        //Registra un nuevo usuario en la base de datos comprobando que no esté duplicado
         private void btnRegistro_Click(object sender, EventArgs e)
         {
             string user = txtUsuario.Text.Trim();
@@ -60,30 +93,35 @@ namespace InterfazGrafica
                 return;
             }
 
-            GestionUsuarios gestion = new GestionUsuarios();
-            gestion.Iniciar();
-
-            int resultado = gestion.RegistrarUsuario(user, pass);
-
-            gestion.Cerrar();
-
-            if (resultado == 0)
+            try
             {
-                MessageBox.Show("Usuario registrado correctamente. Ahora puedes iniciar sesión.");
-            }
-            else if (resultado == -1)
-            {
-                MessageBox.Show("Error: Ese nombre de usuario ya existe. Elige otro.");
-            }
-            else
-            {
-                MessageBox.Show("Error desconocido al registrar.");
-            }
-        }
+                if (!gestion.Iniciar())
+                {
+                    MessageBox.Show("Error: No se encuentra el fichero de la base de datos (usuarios.db).");
+                    return;
+                }
 
-        private void FormLogin_Load(object sender, EventArgs e)
-        {
+                int resultado = gestion.RegistrarUsuario(user, pass);
+                gestion.Cerrar();
 
+                if (resultado == 0)
+                {
+                    MessageBox.Show("Usuario registrado correctamente. Ahora puedes iniciar sesión.");
+                }
+                else if (resultado == -1)
+                {
+                    MessageBox.Show("Error: Ese nombre de usuario ya existe. Elige otro.");
+                }
+                else
+                {
+                    MessageBox.Show("Error desconocido al registrar.");
+                }
+            }
+            catch (Exception ex)
+            {
+                gestion.Cerrar();
+                MessageBox.Show("Error al registrar en la base de datos: " + ex.Message);
+            }
         }
     }
 }

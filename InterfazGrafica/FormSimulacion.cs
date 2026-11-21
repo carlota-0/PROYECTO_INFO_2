@@ -1,23 +1,21 @@
-// VERSION DOS CON LA LISTA DE VUELOS EN VEX DE DOS FLIGHT PLANS
+
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using FlightLib;
 
 namespace InterfazGrafica
 {
     public partial class FormSimulacion : Form
     {
-        // 1. ATRIBUTOS
         private double distanciaSeg;
         private FlightPlanList listaVuelos;
         private double tiempoCiclo;
-
-        // Creamos una lista para guardar los "dibujitos" (PictureBox) de todos los aviones
         private List<PictureBox> dibujosAviones = new List<PictureBox>();
 
-        // 2. CONSTRUCTOR ACTUALIZADO: Recibe la lista desde Form1
+        //inicializa el formulario de simulación con la lista de vuelos, distancia de seguridad y tiempo de ciclo
         public FormSimulacion(FlightPlanList listaVuelos, double distancia, double tiempoCiclo)
         {
             this.listaVuelos = listaVuelos;
@@ -29,8 +27,25 @@ namespace InterfazGrafica
             ConfigurarAviones();
 
         }
+        private void FormSimulacion_Load(object sender, EventArgs e)
+        {
+            panelEspacioAereo.BackColor = Color.Black;
 
-        // 3. CONFIGURAR AVIONES: Bucle para dibujar todos los aviones de la lista
+            double anchoPanel = panelEspacioAereo.Width;
+            double altoPanel = panelEspacioAereo.Height;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
+                    plan.ExtenderHastaBordeSector(anchoPanel, altoPanel);
+                }
+            }
+            panelEspacioAereo.Invalidate();
+        }
+
+        //Crea un PictureBox por cada vuelo de la lista y lo añade al panel del espacio aéreo
         private void ConfigurarAviones()
         {
             for (int i = 0; i < listaVuelos.GetCount(); i++)
@@ -42,18 +57,18 @@ namespace InterfazGrafica
                     PictureBox pb = new PictureBox();
                     pb.Width = 20;
                     pb.Height = 20;
-                    pb.BackColor = Color.Blue; // Por defecto todos azules
+                    pb.BackColor = Color.Blue;
                     pb.Location = new Point((int)plan.GetInitialPosition().GetX(), (int)plan.GetInitialPosition().GetY());
                     pb.Tag = plan;
                     pb.Click += new EventHandler(this.avion_Click);
 
                     panelEspacioAereo.Controls.Add(pb);
-                    dibujosAviones.Add(pb); // Lo guardamos en nuestra lista de PictureBox
+                    dibujosAviones.Add(pb); 
                 }
             }
         }
 
-        // 4. AVANZAR CICLO: Mueve toda la lista a la vez
+        //Avanza un ciclo a toda la lista de aviones a la vez 
         private void AvanzarCiclo()
         {
             listaVuelos.Mover(tiempoCiclo);
@@ -61,7 +76,6 @@ namespace InterfazGrafica
             bool todosHanLlegado = true;
             bool hayConflicto = false;
 
-            // Actualizamos la posición de cada PictureBox y comprobamos estado
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
@@ -72,9 +86,32 @@ namespace InterfazGrafica
                     pb.Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
 
                     if (!plan.EstaDestino())
+                    {
                         todosHanLlegado = false;
+                    }
+                }
+            }
 
-                    // Comprobamos conflicto de este avión con cualquier otro de la lista
+            ActualizarEstadoAlarma();
+            panelEspacioAereo.Invalidate();
+
+            if (timerSimulador.Enabled && todosHanLlegado)
+            {
+                PararAutomatica();
+                MessageBox.Show("Todos los vuelos han llegado a su destino. Simulación terminada.");
+            }
+        }
+
+        // Comprueba si existe pérdida de separación actual entre algún par de vuelos y actualiza la etiqueta de alarma
+        private void ActualizarEstadoAlarma()
+        {
+            bool hayConflicto = false;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                if (plan != null)
+                {
                     for (int j = i + 1; j < listaVuelos.GetCount(); j++)
                     {
                         FlightPlan otroPlan = listaVuelos.GetFlightPlan(j);
@@ -86,8 +123,6 @@ namespace InterfazGrafica
                 }
             }
 
-            panelEspacioAereo.Invalidate();
-
             if (hayConflicto)
             {
                 lblEstadoAlarma.Text = "¡ALARMA: PÉRDIDA DE SEPARACIÓN ENTRE VUELOS!";
@@ -98,14 +133,9 @@ namespace InterfazGrafica
                 lblEstadoAlarma.Text = "ESTADO: SECTOR SEGURO";
                 lblEstadoAlarma.BackColor = Color.Green;
             }
-
-            if (timerSimulador.Enabled && todosHanLlegado)
-            {
-                PararAutomatica();
-                MessageBox.Show("Todos los vuelos han llegado a su destino. Simulación terminada.");
-            }
         }
 
+        //Detiene temporizador automático
         private void PararAutomatica()
         {
             timerSimulador.Stop();
@@ -114,11 +144,7 @@ namespace InterfazGrafica
             btnMover.Enabled = true;
         }
 
-        private void btnMover_Click(object sender, EventArgs e)
-        {
-            AvanzarCiclo();
-        }
-
+        // Devuelve todos los aviones a su posición inicial y actualiza el panel y el estado de alarma
         private void ReiniciarSimulacion()
         {
             for (int i = 0; i < listaVuelos.GetCount(); i++)
@@ -136,9 +162,145 @@ namespace InterfazGrafica
             lblEstadoAlarma.BackColor = Color.Green;
         }
 
+        //Avanza un paso manual en la simulación al pulsar el botón
+        private void btnMover_Click(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+
+        //Comprueba conflictos futuros antes de arrancar la simulación automática y activa el temporizador
+        private void btnAuto_Click(object sender, EventArgs e)
+        {
+            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
+
+            if (conflictos.Count > 0)
+            {
+                bool resuelto;
+                double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
+
+                FormProponerVelocidades f = new FormProponerVelocidades(listaVuelos, propuestas, conflictos, distanciaSeg);
+                f.ShowDialog();
+            }
+
+            timerSimulador.Start();
+            btnAuto.Enabled = false;
+            btnDetener.Enabled = true;
+            btnMover.Enabled = false;
+        }
+
+        private void btnDetener_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+        }
+
+        private void timerSimulador_Tick(object sender, EventArgs e)
+        {
+            AvanzarCiclo();
+        }
+
+        //Retrocede un paso en el historial de posiciones de todos los vuelos 
+        private void btn_Deshacer_Click(object sender, EventArgs e)
+        {
+            {
+                PararAutomatica();
+                bool seDeshizo = listaVuelos.DeshacerPaso();
+
+                if (seDeshizo)
+                {
+                    int i = 0;
+                    while (i < listaVuelos.GetCount())
+                    {
+                        FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                        dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
+                        i++;
+                    }
+                    panelEspacioAereo.Invalidate();
+                }
+                else
+                {
+                    MessageBox.Show("No hay pasos anteriores para deshacer.");
+                }
+            }
+        }
+
         private void btnReiniciar_Click(object sender, EventArgs e)
         {
             ReiniciarSimulacion();
+        }
+
+        private void btnPredecir_Click(object sender, EventArgs e)
+        {
+            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
+
+            // Si no hay conflictos, no hay nada que proponer
+            if (conflictos.Count == 0)
+            {
+                MessageBox.Show("No se producirá ningún conflicto.", "Predicción");
+                return;
+            }
+
+            string mensaje = "Se produce conflicto entre:\n";
+            for (int i = 0; i < conflictos.Count; i++)
+            {
+                mensaje += "• " + conflictos[i] + "\n";
+            }
+
+            bool resuelto;
+            double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
+
+            //Velocidades propuestas: solo los vuelos que cambiarían
+            mensaje += "\nVelocidades propuestas:\n";
+            bool hayCambios = false;
+
+            for (int i = 0; i < listaVuelos.GetCount(); i++)
+            {
+                FlightPlan plan = listaVuelos.GetFlightPlan(i);
+
+                if (Math.Abs(propuestas[i] - plan.GetVelocidad()) > 0.001)
+                {
+                    mensaje += "• " + plan.GetId() + ": " + propuestas[i].ToString("F2") + "\n";
+                    hayCambios = true;
+                }
+            }
+
+            if (!hayCambios)
+            {
+                mensaje += "(No se ha encontrado ninguna solución)\n";
+            }
+            else if (!resuelto)
+            {
+                mensaje += "\nAviso: Aun con estas velocidades quedarían conflictos sin resolver.\n";
+            }
+
+            MessageBox.Show(mensaje, "Predicción");
+        }
+
+        private void btnAplicarVel_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+
+            FormVelocidades f = new FormVelocidades(listaVuelos);
+            f.ShowDialog();
+
+            if (f.HaAplicado())
+            {
+                ReiniciarSimulacion();
+            }
+        }
+
+        // Abre el formulario que muestra el listado completo de vuelos y sus datos
+        private void btnListaVuelos_Click(object sender, EventArgs e)
+        {
+            PararAutomatica();
+
+            FormListaVuelos f = new FormListaVuelos(listaVuelos);
+            f.ShowDialog();
+        }
+
+        // Indica al usuario cómo consultar los datos de los vuelos mediante la lista o haciendo clic en un avión
+        private void btnDatos_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Funcionalidad deshabilitada para listas en V2.", "Aviso");
         }
 
         //Muestra los datos del vuelo clicado (ID, compañía, velocidad, posición) y la distancia con todos los demás
@@ -179,21 +341,58 @@ namespace InterfazGrafica
 
         }
 
-        // 5. EVENTO PAINT: Dibuja las líneas y radios de seguridad de TODA la lista
+        private void btnGuardar_Click(object sender, EventArgs e)
+        {
+            bool estabaEnMarcha = timerSimulador.Enabled;
+            timerSimulador.Stop();
+
+            // 2. Preparar la ventanita para elegir dónde guardar
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "Archivos de texto (*.txt)|*.txt";
+            sfd.Title = "Guardar estado de la simulación";
+            sfd.FileName = "Vuelos_Guardados.txt";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    listaVuelos.GuardarEnArchivo(sfd.FileName);
+                    MessageBox.Show("Simulación guardada correctamente.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error al guardar el archivo: " + ex.Message);
+                }
+            }
+
+            if (estabaEnMarcha)
+            {
+                timerSimulador.Start();
+            }
+        }
+
+        // Detiene el temporizador al cerrar el formulario de simulación
+        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            timerSimulador.Stop();
+        }
+
+
+        //// Dibuja las trayectorias, círculos de seguridad e identificadores de todos los vuelos en el panel
         private void panelEspacioAereo_Paint(object sender, PaintEventArgs e)
         {
             if (listaVuelos == null || listaVuelos.GetCount() == 0) return;
 
             Graphics graphics = e.Graphics;
-            Pen penTrayectoria = new Pen(Color.Black);
+            Pen penTrayectoria = new Pen(Color.Gray,1);
             Font fontID = new Font("Arial", 9, FontStyle.Bold);
-            Brush brushID = Brushes.Black;
+            Brush brushID = Brushes.White;
 
             int centro = 10;
             int radioSeguridad = (int)this.distanciaSeg;
             int mitadAvion = 10;
 
-            // 1. Dibujar trayectorias
+            //Dibujar trayectorias
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
@@ -212,7 +411,7 @@ namespace InterfazGrafica
             }
             penTrayectoria.Dispose();
 
-            // 2. Dibujar círculos de seguridad y comprobar conflictos
+            //Dibujamos los círculos de seguridad y comprobamos conflictos
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
@@ -223,7 +422,7 @@ namespace InterfazGrafica
                     bool enConflicto = false;
                     for (int j = 0; j < listaVuelos.GetCount(); j++)
                     {
-                        if (i != j) // No compararse consigo mismo
+                        if (i != j) 
                         {
                             FlightPlan otroPlan = listaVuelos.GetFlightPlan(j);
                             if (otroPlan != null && plan.Conflicto(otroPlan, distanciaSeg))
@@ -249,182 +448,6 @@ namespace InterfazGrafica
                 }
             }
         }
-
-        private void btnAuto_Click(object sender, EventArgs e)
-        {
-            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
-
-            if (conflictos.Count > 0)
-            {
-                bool resuelto;
-                double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
-
-                // Se abre la tabla. Pulse lo que pulse el usuario (Aplicar, Sin cambios,
-                // Cancelar o la X), cuando se cierre seguimos y la simulación arranca.
-                FormProponerVelocidades f = new FormProponerVelocidades(listaVuelos, propuestas, conflictos, distanciaSeg);
-                f.ShowDialog();
-            }
-
-            timerSimulador.Start();
-            btnAuto.Enabled = false;
-            btnDetener.Enabled = true;
-            btnMover.Enabled = false;
-        }
-
-        private void btnDetener_Click(object sender, EventArgs e)
-        {
-            PararAutomatica();
-        }
-
-        private void timerSimulador_Tick(object sender, EventArgs e)
-        {
-            AvanzarCiclo();
-        }
-
-        private void btnDatos_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Funcionalidad deshabilitada para listas en V2.", "Aviso");
-        }
-
-        private void btnAplicarVel_Click(object sender, EventArgs e)
-        {
-            PararAutomatica();
-
-            FormVelocidades f = new FormVelocidades(listaVuelos);
-            f.ShowDialog();
-
-            if (f.HaAplicado())
-            {
-                ReiniciarSimulacion();
-            }
-        }
-
-        private void btnPredecir_Click(object sender, EventArgs e)
-        {
-            List<string> conflictos = listaVuelos.DetectarConflictos(distanciaSeg);
-
-            // Si no hay conflictos, no hay nada que proponer
-            if (conflictos.Count == 0)
-            {
-                MessageBox.Show("No se producirá ningún conflicto.", "Predicción");
-                return;
-            }
-
-            // 1. Parejas que entran en conflicto
-            string mensaje = "Se produce conflicto entre:\n";
-            for (int i = 0; i < conflictos.Count; i++)
-            {
-                mensaje += "• " + conflictos[i] + "\n";
-            }
-
-            // 2. Calculamos las velocidades propuestas (no cambia nada de verdad)
-            bool resuelto;
-            double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
-
-            // 3. Velocidades propuestas: solo los vuelos que cambiarían
-            mensaje += "\nVelocidades propuestas:\n";
-            bool hayCambios = false;
-
-            for (int i = 0; i < listaVuelos.GetCount(); i++)
-            {
-                FlightPlan plan = listaVuelos.GetFlightPlan(i);
-
-                if (Math.Abs(propuestas[i] - plan.GetVelocidad()) > 0.001)
-                {
-                    mensaje += "• " + plan.GetId() + ": " + propuestas[i].ToString("F2") + "\n";
-                    hayCambios = true;
-                }
-            }
-
-            if (!hayCambios)
-            {
-                mensaje += "(no se ha encontrado ninguna solución)\n";
-            }
-            else if (!resuelto)
-            {
-                mensaje += "\nAviso: aun con estas velocidades quedarían conflictos sin resolver.\n";
-            }
-
-            MessageBox.Show(mensaje, "Predicción");
-        }
-
-        private void btn_Deshacer_Click(object sender, EventArgs e)
-        {
-            {
-                PararAutomatica();
-                bool seDeshizo = listaVuelos.DeshacerPaso();
-
-                if (seDeshizo)
-                {
-                    int i = 0;
-                    while (i < listaVuelos.GetCount())
-                    {
-                        FlightPlan plan = listaVuelos.GetFlightPlan(i);
-                        dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
-                        i++;
-                    }
-                    panelEspacioAereo.Invalidate();
-                }
-                else
-                {
-                    MessageBox.Show("No hay pasos anteriores para deshacer.");
-                }
-            }
-        }
-        private void FormSimulacion_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            timerSimulador.Stop();
-        }
-
-        private void FormSimulacion_Load(object sender, EventArgs e)
-        {
-            double anchoPanel = panelEspacioAereo.Width;
-            double altoPanel = panelEspacioAereo.Height;
-
-            for (int i = 0; i < listaVuelos.GetCount(); i++)
-            {
-                FlightPlan plan = listaVuelos.GetFlightPlan(i);
-                if (plan != null)
-                {
-                    plan.ExtenderHastaBordeSector(anchoPanel, altoPanel);
-                }
-            }
-
-            panelEspacioAereo.Invalidate();
-        }
-        private void btnGuardar_Click(object sender, EventArgs e)
-        {
-            // 1. Pausar el temporizador para que los aviones se queden quietos mientras guardas
-            timerSimulador.Stop();
-
-            // 2. Preparar la ventanita para elegir dónde guardar
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Archivos de texto (*.txt)|*.txt";
-            sfd.Title = "Guardar estado de la simulación";
-            sfd.FileName = "Vuelos_Guardados.txt";
-
-            // 3. Si el usuario le da a "Guardar"
-            if (sfd.ShowDialog() == DialogResult.OK)
-            {
-                // Llamamos a tu función de guardado
-                // (Asegúrate de que 'milista' sea el nombre de tu variable FlightPlanList en este Form)
-                listaVuelos.GuardarEnArchivo(sfd.FileName);
-
-                MessageBox.Show("Simulación guardada correctamente.");
-            }
-
-            // 4. Como no salimos del programa, tenemos que reanudar el vuelo.
-            // Esto se ejecuta tanto si guarda como si cancela la ventana.
-            timerSimulador.Start();
-        }
-
-        private void btnListaVuelos_Click(object sender, EventArgs e)
-        {
-            // Paramos el automático para que la lista no quede desactualizada
-            PararAutomatica();
-
-            FormListaVuelos f = new FormListaVuelos(listaVuelos);
-            f.ShowDialog();
-        }
+     
     }
 }

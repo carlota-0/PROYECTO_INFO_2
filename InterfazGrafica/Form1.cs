@@ -14,11 +14,7 @@ namespace InterfazGrafica
             InitializeComponent();
         }
 
-        private void menuOpciones_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        //Abre el formulario para introducir dos planes de vuelo manualmente y los añade a la lista
         private void menuPlanesVuelo_Click(object sender, EventArgs e)
         {
             // Creamos el formulario de planes de vuelo
@@ -45,35 +41,7 @@ namespace InterfazGrafica
 
         }
 
-        private void menuParametros_Click(object sender, EventArgs e)
-        {
-            FormParametros p = new FormParametros();
-            DialogResult resultado = p.ShowDialog();
-            if (resultado == DialogResult.OK)
-            {
-                // Guardamos los parámetros
-                this.distanciaSeguridad = p.DistanciaSeguridad;
-                this.tiempoCiclo = p.TiempoCiclo;
-                MessageBox.Show($"Parámetros guardados correctamente:\nDistancia de seguridad: {distanciaSeguridad}\nTiempo de ciclo: {tiempoCiclo}");
-            }
-        }
-        private void menuSimulacion_Click(object sender, EventArgs e)
-        {
-            if (listaVuelos.GetFlightPlan(0) == null)
-            {
-                MessageBox.Show(" Porfavor, introduce o carga primero los planes de vuelo");
-                return; 
-            }
-            //Li passem la llista sencera d'avions al simualdor
-            FormSimulacion formSim = new FormSimulacion(listaVuelos, this.distanciaSeguridad, this.tiempoCiclo);
-            formSim.ShowDialog();
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        //
         private void cargarPlanesDeVueloDesdeArchivoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
@@ -99,6 +67,39 @@ namespace InterfazGrafica
                     MessageBox.Show("Error al cargar el fichero: " + ex.Message);
                 }
             }
+        }
+
+        //Abre el form de parámetros
+        private void menuParametros_Click(object sender, EventArgs e)
+        {
+            FormParametros p = new FormParametros();
+            DialogResult resultado = p.ShowDialog();
+            if (resultado == DialogResult.OK)
+            {
+                this.distanciaSeguridad = p.DistanciaSeguridad;
+                this.tiempoCiclo = p.TiempoCiclo;
+                MessageBox.Show($"Parámetros guardados correctamente:\nDistancia de seguridad: {distanciaSeguridad}\nTiempo de ciclo: {tiempoCiclo}");
+            }
+        }
+
+        //Comprueba que haya vuelos cargados y abre el formulario de simulación
+        private void menuSimulacion_Click(object sender, EventArgs e)
+        {
+            if (listaVuelos.GetFlightPlan(0) == null)
+            {
+                MessageBox.Show(" Porfavor, introduce o carga primero los planes de vuelo");
+                return; 
+            }
+            FormSimulacion formSim = new FormSimulacion(listaVuelos, this.distanciaSeguridad, this.tiempoCiclo);
+            formSim.ShowDialog();
+        }
+
+        private void menuOpciones_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
         }
     }
 }

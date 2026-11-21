@@ -1,11 +1,5 @@
 ﻿using FlightLib;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Numerics;
-using System.Text;
 using System.Windows.Forms;
 
 namespace InterfazGrafica
@@ -15,6 +9,13 @@ namespace InterfazGrafica
         private FlightPlan Plan1;
         private FlightPlan Plan2;
 
+        public FormPlanesVuelo()
+        {
+            InitializeComponent();
+
+            //Boton cancelar cierra el form sin guardar nada
+            btnCancelar.DialogResult = DialogResult.Cancel;
+        }
         public FlightPlan GetPlan1()
         {
             return Plan1;
@@ -24,23 +25,8 @@ namespace InterfazGrafica
         {
             return Plan2;
         }
-        public FormPlanesVuelo()
-        {
-            InitializeComponent();
 
-            //Boton cancelar cierra el form sin guardar nada
-            btnCancelar.DialogResult = DialogResult.Cancel;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void FormPlanesVuelo_Load(object sender, EventArgs e)
-        {
-
-        }
+        //Rellena los campos de ambos vuelos con valores por defecto
         private void btnDefecto_Click(object sender, EventArgs e)
         {
             textID1.Text = "IBE123";
@@ -59,18 +45,16 @@ namespace InterfazGrafica
 
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            //Desclaramos variables numéricas
             double x1 = 0, y1 = 0, xf1 = 0, yf1 = 0, vel1 = 0;
             double x2 = 0, y2 = 0, xf2 = 0, yf2 = 0, vel2 = 0;
 
-            //1r leer y comprobar vuelo1
-            string id1 = textID1.Text.Trim();
-            //Trim() elimina espacios en blanco!!
+            //VUELO 1
+
+            string id1 = textID1.Text.Trim(); 
             if (id1 == "")
             {
                 MessageBox.Show("Vuelo 1: ID vacía, escribe un identificador");
                 return;
-
             }
 
             string comp1 = textCompania1.Text.Trim();
@@ -80,7 +64,6 @@ namespace InterfazGrafica
                 return;
             }
 
-            //POSICION INICIAL (x,y)
             string[] ini1 = Ini1.Text.Split(",");
             if (ini1.Length != 2)
             {
@@ -99,9 +82,6 @@ namespace InterfazGrafica
                 return;
             }
               
-    
-
-            //POSICION FINAL(x,y)
             string[] fin1 = Fin1.Text.Split(",");
             if (fin1.Length != 2)
             {
@@ -120,8 +100,6 @@ namespace InterfazGrafica
                 return;
             }
 
-            //VELOCIDAD
-
             try
             {
                 vel1 = Convert.ToDouble(textVelocidad1.Text);
@@ -139,16 +117,14 @@ namespace InterfazGrafica
     
             }
 
-            //POSICION INICIAL Y FINAL 1 NO IGUALES
             if (x1 == xf1 && y1 == yf1)
             {
                 MessageBox.Show("Vuelo 1: Posición inicial y final no pueden ser iguales");
                 return;
             }
 
-            //_____________________
             //VUELO2
-            //_____________________
+
             string id2 = textID2.Text.Trim();
             if (id2 == "")
             {
@@ -163,7 +139,6 @@ namespace InterfazGrafica
                 return;
             }
 
-            //POSICION INICIAL (x,y)
             string[] ini2 = Ini2.Text.Split(",");
             if (ini2.Length != 2)
             {
@@ -182,7 +157,6 @@ namespace InterfazGrafica
                 return;
             }
 
-            //POSICION FINAL(x,y)
             string[] fin2 = Fin2.Text.Split(",");
             if (fin2.Length != 2)
             {
@@ -199,8 +173,6 @@ namespace InterfazGrafica
                 MessageBox.Show("Vuelo 2: Posición final incorrecta, escribe x,y");
                 return;
             }
-
-            //VELOCIDAD
 
             try
             {
@@ -219,17 +191,13 @@ namespace InterfazGrafica
 
             }
 
-
-            //POSICION INICIAL Y FINAL 2 NO IGUALES
             if (x2 == xf2 && y2 == yf2)
             {
                 MessageBox.Show("Vuelo 2: Posición inicial y final no pueden ser iguales");
                 return;
             }
 
-            //COMPROBACION ID NO IGUALES
             if (id1.ToUpper() == id2.ToUpper())
-            //Añadimos ToUpper()para que si lo escribimos en minúsculas también se acepte
             {
                 MessageBox.Show("Los identificadores de los vuelos no pueden ser iguales");
                 return;
@@ -240,6 +208,13 @@ namespace InterfazGrafica
 
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+        }
+        private void FormPlanesVuelo_Load(object sender, EventArgs e)
+        {
         }
     }
 }

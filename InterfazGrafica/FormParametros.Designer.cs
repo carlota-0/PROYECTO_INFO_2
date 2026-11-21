@@ -71,7 +71,7 @@
             // 
             // btnAceptar
             // 
-            btnAceptar.Location = new Point(49, 229);
+            btnAceptar.Location = new Point(197, 229);
             btnAceptar.Name = "btnAceptar";
             btnAceptar.Size = new Size(112, 34);
             btnAceptar.TabIndex = 4;
@@ -90,7 +90,7 @@
             // 
             // btnDefecto
             // 
-            btnDefecto.Location = new Point(192, 229);
+            btnDefecto.Location = new Point(49, 229);
             btnDefecto.Name = "btnDefecto";
             btnDefecto.Size = new Size(112, 34);
             btnDefecto.TabIndex = 0;

@@ -56,7 +56,7 @@ namespace InterfazGrafica
             // 
             // btnMover
             // 
-            btnMover.Location = new Point(537, 683);
+            btnMover.Location = new Point(453, 684);
             btnMover.Name = "btnMover";
             btnMover.Size = new Size(171, 46);
             btnMover.TabIndex = 0;
@@ -65,7 +65,7 @@ namespace InterfazGrafica
             // 
             // btnReiniciar
             // 
-            btnReiniciar.Location = new Point(754, 683);
+            btnReiniciar.Location = new Point(858, 683);
             btnReiniciar.Name = "btnReiniciar";
             btnReiniciar.Size = new Size(171, 46);
             btnReiniciar.TabIndex = 0;
@@ -74,7 +74,7 @@ namespace InterfazGrafica
             // 
             // btnAuto
             // 
-            btnAuto.Location = new Point(126, 683);
+            btnAuto.Location = new Point(20, 683);
             btnAuto.Name = "btnAuto";
             btnAuto.Size = new Size(171, 46);
             btnAuto.TabIndex = 2;
@@ -85,7 +85,7 @@ namespace InterfazGrafica
             // btnDetener
             // 
             btnDetener.Enabled = false;
-            btnDetener.Location = new Point(322, 683);
+            btnDetener.Location = new Point(230, 683);
             btnDetener.Name = "btnDetener";
             btnDetener.Size = new Size(171, 46);
             btnDetener.TabIndex = 3;
@@ -132,7 +132,7 @@ namespace InterfazGrafica
             // 
             // btnDeshacer
             // 
-            btnDeshacer.Location = new Point(238, 758);
+            btnDeshacer.Location = new Point(675, 683);
             btnDeshacer.Name = "btnDeshacer";
             btnDeshacer.Size = new Size(141, 49);
             btnDeshacer.TabIndex = 6;

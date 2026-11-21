@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace InterfazGrafica
@@ -12,7 +7,8 @@ namespace InterfazGrafica
     {
         public double DistanciaSeguridad;
         public double TiempoCiclo;
-        double distancia = 0, tiempo = 0;
+
+        //Inicializa el formulario y configura el botón cancelar
         public FormParametros()
         {
             InitializeComponent();
@@ -20,10 +16,18 @@ namespace InterfazGrafica
 
         }
 
+        //Rellena los campos de parámetros con valores por defecto
+        private void btnDefecto_Click(object sender, EventArgs e)
+        {
+            distSeguridad.Text = "50";
+            tiempoC.Text = "10";
+        }
+
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            // --- Distancia de seguridad ---
-          
+            double distancia = 0;
+            double tiempo = 0;
+
             try
             {
                 distancia = Convert.ToDouble(distSeguridad.Text);
@@ -39,7 +43,6 @@ namespace InterfazGrafica
                 return;
             }
 
-            // --- Tiempo de ciclo ---
             try
             {
                 tiempo = Convert.ToDouble(tiempoC.Text);
@@ -66,11 +69,6 @@ namespace InterfazGrafica
         private void FormParametros_Load(object sender, EventArgs e)
         {
 
-        }
-        private void btnDefecto_Click(object sender, EventArgs e)
-        {
-            distSeguridad.Text = "50";
-            tiempoC.Text = "10";
         }
     }
 }
