@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FlightLib
 {
@@ -12,63 +9,34 @@ namespace FlightLib
     {
         private List<FlightPlan> lista = new List<FlightPlan>();
 
-        // Añade el vuelo y devuelve el índice donde lo ha guardado
+        // Añade un plan de vuelo a la lista y devuelve el índice asignado
         public int AddFlightPlan(FlightPlan p)
         {
-            lista.Add(p); // Add hace todo el trabajo de meterlo al final
-            return lista.Count - 1; // Count nos dice cuántos hay
+            lista.Add(p); 
+            return lista.Count - 1; 
         }
+
+        // Devuelve el número total de vuelos almacenados en la lista
         public int GetCount()
         {
             return lista.Count;
         }
 
+        //Devuelve el plan de vuelo ubicado en el índice indicado
         public FlightPlan GetFlightPlan(int i)
         {
-            // Count sustituye a tu antigua variable "number"
             if (i < 0 || i >= lista.Count)
             {
                 return null;
             }
             else
-            {
-                // En C#, las List se leen con corchetes igual que los vectores
+            {   
                 return lista[i];
             }
         }
 
-        public void Mover(double tiempo)
-        {
-            int i = 0;
-            while (i < lista.Count)
-            {
-                lista[i].Mover(tiempo);
-                i++;
-            }
-        }
-        public void Restart()
-        {
-            for (int i = 0; i < lista.Count; i++)
-            {
-                lista[i].Restart();
-            }
-        }
-
-        // Deshace el último paso de todos los vuelos de la lista; devuelve true si había pasos para deshacer
-        public bool DeshacerPaso()
-        {
-            bool deshecho = false;
-            int i = 0;
-            while (i < lista.Count)
-            {
-                if (lista[i].DeshacerPaso())
-                {
-                    deshecho = true;
-                }
-                i++;
-            }
-            return deshecho;
-        }
+        //GESTIÓN DE ARCHIVOS
+        //-------------------
 
         // Lee los planes de vuelo desde un archivo de texto (parámetro: ruta del archivo)
         public void CargarDesdeArchivo(string rutaArchivo)
@@ -111,6 +79,11 @@ namespace FlightLib
                         throw new FormatException("La velocidad de todos los vuelos debe ser mayor que 0.");
                     }
 
+                    if (ix == fx && iy == fy)
+                    {
+                        throw new FormatException("La posición inicial y final de un vuelo no pueden ser iguales.");
+                    }
+
                     FlightPlan avion = new FlightPlan(id, company, ix, iy, fx, fy, vel);
                     nuevaLista.Add(avion);
                     linea = r.ReadLine();
@@ -151,6 +124,46 @@ namespace FlightLib
                 w.Close();
             }
         }
+
+        //CONTROL SIMULACIÓN
+        //------------------
+
+        public void Mover(double tiempo)
+        {
+            for (int i = 0;  i < lista.Count; i++)
+            {
+                lista[i].Mover(tiempo);
+                i++;
+            }
+        }
+
+        // Deshace el último paso de todos los vuelos de la lista; devuelve true si había pasos para deshacer
+        public bool DeshacerPaso()
+        {
+            bool deshecho = false;
+            for (int i = 0; i < lista.Count; i++)
+            {
+                if (lista[i].DeshacerPaso())
+                {
+                    deshecho = true;
+                }
+            }
+            return deshecho;
+        }
+
+        // Reinicia todos los vuelos de la lista a su posición inicial
+        public void Restart()
+        {
+            for (int i = 0; i < lista.Count; i++)
+            {
+                lista[i].Restart();
+            }
+        }
+
+        //DETECCIÓN CONFLICTOS Y PROPUESTA
+        //--------------------------------
+
+        //Detecta parejas de vuelos con conflicto futuro
         public List<string> DetectarConflictos(double distanciaSeguridad)
         {
             List<string> conflictos = new List<string>();
@@ -168,18 +181,19 @@ namespace FlightLib
 
             return conflictos;
         }
+
+        //Calcula velocidades propuestas para resolver conflictos
         public double[] ProponerVelocidades(double distanciaSeguridad, out bool resuelto)
         {
             int cantidad = lista.Count;
 
-            // PASO 1: guardamos las velocidades de verdad (copia de seguridad)
             double[] velocidadesOriginales = new double[cantidad];
             for (int i = 0; i < cantidad; i++)
             {
                 velocidadesOriginales[i] = lista[i].GetVelocidad();
             }
 
-            // PASO 2: miramos todas las parejas de vuelos
+            //Hacemos bucle para mirar todas las parejas de vuelos
             for (int i = 0; i < cantidad; i++)
             {
                 for (int j = i + 1; j < cantidad; j++)
@@ -195,19 +209,19 @@ namespace FlightLib
                 }
             }
 
-            // PASO 3: comprobamos si después de los cambios todavía queda algún conflicto
+            //Comprobamos si después de los cambios todavía queda algún conflicto
             List<string> conflictosRestantes = DetectarConflictos(distanciaSeguridad);
 
             if (conflictosRestantes.Count == 0)
             {
-                resuelto = true;    // no queda ninguno: todo arreglado
+                resuelto = true;  
             }
             else
             {
-                resuelto = false;   // todavía queda alguno sin arreglar
+                resuelto = false; 
             }
 
-            // PASO 4: guardamos las velocidades de prueba y devolvemos las originales a los vuelos
+            //Guardamos las velocidades de prueba y devolvemos las originales a los vuelos
             double[] velocidadesPropuestas = new double[cantidad];
             for (int i = 0; i < cantidad; i++)
             {
@@ -217,8 +231,6 @@ namespace FlightLib
 
             return velocidadesPropuestas;
         }
-
-
     }
 }
     

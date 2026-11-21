@@ -126,6 +126,7 @@
   <ItemGroup>
     <Compile Include="FlightPlan.cs" />
     <Compile Include="FlightPlanList.cs" />
+    <Compile Include="GestionUsuarios.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
