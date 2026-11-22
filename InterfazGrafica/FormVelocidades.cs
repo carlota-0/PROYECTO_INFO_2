@@ -61,7 +61,11 @@ namespace InterfazGrafica
             {
                 string texto = Convert.ToString(dgvVelocidades.Rows[i].Cells["colVelocidad"].Value);
 
-                if (!double.TryParse(texto, out nuevas[i]))
+                try
+                {
+                    nuevas[i] = Convert.ToDouble(texto);
+                }
+                catch
                 {
                     MessageBox.Show("Vuelo " + lista.GetFlightPlan(i).GetId() + ": escribe un número");
                     return;
@@ -88,7 +92,6 @@ namespace InterfazGrafica
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             Close();
-            lista.Restart();
         }
 
         private void FormVelocidades_Load(object sender, EventArgs e)

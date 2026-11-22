@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 
-
 namespace FlightLib
 {
     public class GestionUsuarios
@@ -11,7 +10,8 @@ namespace FlightLib
         private SQLiteConnection cnx;
         private string rutaBaseDatos = "usuarios.db";
 
-        // Comprueba si existe la base de datos y abre la conexión
+        // Comprueba si existe la base de datos y abre la conexión.
+        // Parámetros: ninguno. Devuelve: true si se abre correctamente, false si no existe el archivo.
         public bool Iniciar()
         {
             if (!File.Exists(rutaBaseDatos))
@@ -23,7 +23,8 @@ namespace FlightLib
             return true;
         }
 
-        // Cierra la conexión con la base de datos 
+        // Cierra la conexión con la base de datos si está abierta.
+        // Parámetros: ninguno. Devuelve: nada (void).
         public void Cerrar()
         {
             if (cnx != null && cnx.State == ConnectionState.Open)
@@ -32,16 +33,13 @@ namespace FlightLib
             }
         }
 
-        // Comprueba si el usuario y la contraseña coinciden en la base de datos
+        // Comprueba si el usuario y la contraseña coinciden en la base de datos.
+        // Parámetros: user (nombre de usuario), pass (contraseña). Devuelve: true si existe, false si no.
         public bool ComprobarLogin(string user, string pass)
         {
             DataTable dt = new DataTable();
-            string sql = "SELECT * FROM usuarios WHERE username=@user AND password=@pass";
-            SQLiteCommand cmd = new SQLiteCommand(sql, cnx);
-            cmd.Parameters.AddWithValue("@user", user);
-            cmd.Parameters.AddWithValue("@pass", pass);
-
-            SQLiteDataAdapter adp = new SQLiteDataAdapter(cmd);
+            string sql = "SELECT * FROM usuarios WHERE username='" + user + "' AND password='" + pass + "'";
+            SQLiteDataAdapter adp = new SQLiteDataAdapter(sql, cnx);
             adp.Fill(dt);
 
             if (dt.Rows.Count == 1)
@@ -54,39 +52,34 @@ namespace FlightLib
             }
         }
 
-        // Registra un nuevo usuario en la base de datos
+        // Registra un nuevo usuario en la base de datos si no existe previamente.
+        // Parámetros: user (nombre de usuario), pass (contraseña). Devuelve: 0 si se registra, -1 si ya existe, -2 si hay error.
         public int RegistrarUsuario(string user, string pass)
         {
-            // 1. Primero comprobamos si el nombre de usuario ya existe
+            // Comprobamos si el nombre de usuario ya existe
             DataTable dt = new DataTable();
-            string sqlCheck = "SELECT * FROM usuarios WHERE username=@user";
-            SQLiteCommand cmdCheck = new SQLiteCommand(sqlCheck, cnx);
-            cmdCheck.Parameters.AddWithValue("@user", user);
-
-            SQLiteDataAdapter adp = new SQLiteDataAdapter(cmdCheck);
+            string sqlCheck = "SELECT * FROM usuarios WHERE username='" + user + "'";
+            SQLiteDataAdapter adp = new SQLiteDataAdapter(sqlCheck, cnx);
             adp.Fill(dt);
 
             if (dt.Rows.Count > 0)
             {
-                return -1; 
+                return -1;
             }
 
-            // 2. Si no existe, lo insertamos
-            string sql = "INSERT INTO usuarios VALUES (@user, @pass)";
+            // Si no existe, lo insertamos
+            string sql = "INSERT INTO usuarios VALUES ('" + user + "', '" + pass + "')";
             SQLiteCommand command = new SQLiteCommand(sql, cnx);
-            command.Parameters.AddWithValue("@user", user);
-            command.Parameters.AddWithValue("@pass", pass);
-
             int affectedRows = command.ExecuteNonQuery();
+
             if (affectedRows == 1)
             {
-                return 0; 
+                return 0;
             }
             else
             {
                 return -2;
             }
-
         }
     }
 }

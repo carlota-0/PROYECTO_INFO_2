@@ -214,6 +214,7 @@ namespace InterfazGrafica
                         dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
                         i++;
                     }
+                    ActualizarEstadoAlarma();
                     panelEspacioAereo.Invalidate();
                 }
                 else
@@ -340,13 +341,11 @@ namespace InterfazGrafica
             MessageBox.Show(info, "Información y Distancias - " + planSeleccionado.GetId(), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         }
-
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            bool estabaEnMarcha = timerSimulador.Enabled;
-            timerSimulador.Stop();
+            // Paramos el modo automático y reactivamos los botones manuales
+            PararAutomatica();
 
-            // 2. Preparar la ventanita para elegir dónde guardar
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Archivos de texto (*.txt)|*.txt";
             sfd.Title = "Guardar estado de la simulación";
@@ -363,11 +362,6 @@ namespace InterfazGrafica
                 {
                     MessageBox.Show("Error al guardar el archivo: " + ex.Message);
                 }
-            }
-
-            if (estabaEnMarcha)
-            {
-                timerSimulador.Start();
             }
         }
 
@@ -433,9 +427,21 @@ namespace InterfazGrafica
                         }
                     }
 
-                    Color colorCirculo = enConflicto ? Color.Red : Color.Green;
-                    int grosor = enConflicto ? 3 : 2;
-                    pb.BackColor = enConflicto ? Color.Red : Color.Blue;
+                    Color colorCirculo;
+                    int grosor;
+
+                    if (enConflicto)
+                    {
+                        colorCirculo = Color.Red;
+                        grosor = 3;
+                        pb.BackColor = Color.Red;
+                    }
+                    else
+                    {
+                        colorCirculo = Color.Green;
+                        grosor = 2;
+                        pb.BackColor = Color.Blue;
+                    }
 
                     Pen penSeguridad = new Pen(colorCirculo, grosor);
                     int centroX = pb.Location.X + mitadAvion;

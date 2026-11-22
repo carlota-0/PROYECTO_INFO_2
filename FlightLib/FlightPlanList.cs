@@ -133,7 +133,6 @@ namespace FlightLib
             for (int i = 0;  i < lista.Count; i++)
             {
                 lista[i].Mover(tiempo);
-                i++;
             }
         }
 

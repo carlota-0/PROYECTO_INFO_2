@@ -78,7 +78,7 @@ namespace InterfazGrafica
             {
                 this.distanciaSeguridad = p.DistanciaSeguridad;
                 this.tiempoCiclo = p.TiempoCiclo;
-                MessageBox.Show($"Parámetros guardados correctamente:\nDistancia de seguridad: {distanciaSeguridad}\nTiempo de ciclo: {tiempoCiclo}");
+                MessageBox.Show("Parámetros guardados correctamente:\nDistancia de seguridad: " + distanciaSeguridad + "\nTiempo de ciclo: " + tiempoCiclo);
             }
         }
 
