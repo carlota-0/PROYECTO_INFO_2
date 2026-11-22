@@ -41,11 +41,11 @@
             // 
             dgvVelocidades.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvVelocidades.Columns.AddRange(new DataGridViewColumn[] { colID, colVelocidad });
-            dgvVelocidades.Location = new Point(95, 84);
-            dgvVelocidades.Margin = new Padding(2, 2, 2, 2);
+            dgvVelocidades.Location = new Point(42, 88);
+            dgvVelocidades.Margin = new Padding(2);
             dgvVelocidades.Name = "dgvVelocidades";
             dgvVelocidades.RowHeadersWidth = 82;
-            dgvVelocidades.Size = new Size(375, 177);
+            dgvVelocidades.Size = new Size(484, 205);
             dgvVelocidades.TabIndex = 0;
             // 
             // colID
@@ -64,21 +64,21 @@
             // 
             // textBox1
             // 
-            textBox1.BackColor = Color.FromArgb(192, 192, 255);
-            textBox1.Location = new Point(129, 30);
-            textBox1.Margin = new Padding(2, 2, 2, 2);
+            textBox1.BackColor = Color.Lavender;
+            textBox1.Location = new Point(147, 37);
+            textBox1.Margin = new Padding(2);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(276, 31);
+            textBox1.Size = new Size(270, 31);
             textBox1.TabIndex = 1;
-            textBox1.Text = "    Velocidades de los aviones";
+            textBox1.Text = "VELOCIDADES DE LOS AVIONES";
             // 
             // btnAceptar
             // 
             btnAceptar.BackColor = SystemColors.ButtonHighlight;
-            btnAceptar.Location = new Point(502, 102);
-            btnAceptar.Margin = new Padding(2, 2, 2, 2);
+            btnAceptar.Location = new Point(109, 325);
+            btnAceptar.Margin = new Padding(2);
             btnAceptar.Name = "btnAceptar";
-            btnAceptar.Size = new Size(145, 55);
+            btnAceptar.Size = new Size(145, 44);
             btnAceptar.TabIndex = 2;
             btnAceptar.Text = "Aceptar";
             btnAceptar.UseVisualStyleBackColor = false;
@@ -86,10 +86,10 @@
             // 
             // btnCerrar
             // 
-            btnCerrar.Location = new Point(502, 176);
-            btnCerrar.Margin = new Padding(2, 2, 2, 2);
+            btnCerrar.Location = new Point(285, 325);
+            btnCerrar.Margin = new Padding(2);
             btnCerrar.Name = "btnCerrar";
-            btnCerrar.Size = new Size(145, 55);
+            btnCerrar.Size = new Size(145, 44);
             btnCerrar.TabIndex = 3;
             btnCerrar.Text = "Cerrar";
             btnCerrar.UseVisualStyleBackColor = true;
@@ -99,12 +99,12 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(805, 439);
+            ClientSize = new Size(581, 439);
             Controls.Add(btnCerrar);
             Controls.Add(btnAceptar);
             Controls.Add(textBox1);
             Controls.Add(dgvVelocidades);
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "FormVelocidades";
             Text = "FormVelocidades";
             Load += FormVelocidades_Load;

@@ -21,10 +21,14 @@ namespace InterfazGrafica
             CargarTabla();
         }
 
-        // Añade una fila por cada vuelo del espacio aéreo
-        // Añade una fila por cada vuelo del espacio aéreo
+        // Añade una fila por cada vuelo del espacio aéreo y actualiza el contador
         private void CargarTabla()
         {
+            if (listaVuelos == null)
+            {
+                return;
+            }
+
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
@@ -38,6 +42,11 @@ namespace InterfazGrafica
 
             dgvLista.ClearSelection();
             lblTotal.Text = "Total de vuelos: " + listaVuelos.GetCount();
+        }
+
+        private void FormListaVuelos_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

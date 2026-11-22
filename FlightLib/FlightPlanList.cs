@@ -12,8 +12,8 @@ namespace FlightLib
         // Añade un plan de vuelo a la lista y devuelve el índice asignado
         public int AddFlightPlan(FlightPlan p)
         {
-            lista.Add(p); 
-            return lista.Count - 1; 
+            lista.Add(p);
+            return lista.Count - 1;
         }
 
         // Devuelve el número total de vuelos almacenados en la lista
@@ -30,7 +30,7 @@ namespace FlightLib
                 return null;
             }
             else
-            {   
+            {
                 return lista[i];
             }
         }
@@ -97,7 +97,7 @@ namespace FlightLib
             this.lista = nuevaLista;
         }
 
-        // Guarda el estado actual de todos los vuelos en un archivo de texto (parámetro: ruta del archivo)
+        // Guarda el estado actual de todos los vuelos en un archivo de texto
         public void GuardarEnArchivo(string rutaArchivo)
         {
             StreamWriter w = new StreamWriter(rutaArchivo);
@@ -130,7 +130,7 @@ namespace FlightLib
 
         public void Mover(double tiempo)
         {
-            for (int i = 0;  i < lista.Count; i++)
+            for (int i = 0; i < lista.Count; i++)
             {
                 lista[i].Mover(tiempo);
             }
@@ -181,6 +181,25 @@ namespace FlightLib
             return conflictos;
         }
 
+        // Comprueba si el vuelo situado en la posición indicada entra en conflicto futuro con algún otro vuelo de la lista (parámetros: índice y distancia de seguridad; devuelve true si hay conflicto)
+        private bool TieneConflictoConAlguno(int indice, double distanciaSeguridad)
+        {
+            FlightPlan vuelo = lista[indice];
+
+            for (int k = 0; k < lista.Count; k++)
+            {
+                if (k != indice)
+                {
+                    if (vuelo.HabraConflicto(lista[k], distanciaSeguridad))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         //Calcula velocidades propuestas para resolver conflictos
         public double[] ProponerVelocidades(double distanciaSeguridad, out bool resuelto)
         {
@@ -192,35 +211,61 @@ namespace FlightLib
                 velocidadesOriginales[i] = lista[i].GetVelocidad();
             }
 
-            //Hacemos bucle para mirar todas las parejas de vuelos
-            for (int i = 0; i < cantidad; i++)
+            for (int pasada = 0; pasada < 3; pasada++)
             {
-                for (int j = i + 1; j < cantidad; j++)
+                for (int i = 0; i < cantidad; i++)
                 {
-                    FlightPlan vueloA = lista[i];
-                    FlightPlan vueloB = lista[j];
-
-                    // Si esta pareja va a chocar, intentamos arreglarlo cambiando la velocidad de B
-                    if (vueloA.HabraConflicto(vueloB, distanciaSeguridad) == true)
+                    if (TieneConflictoConAlguno(i, distanciaSeguridad))
                     {
-                        vueloA.ResolverConflicto(vueloB, distanciaSeguridad);
+                        FlightPlan vuelo = lista[i];
+                        double vActual = vuelo.GetVelocidad();
+                        bool encontrado = false;
+
+                        // Primero probamos a reducir la velocidad del 95 % al 10 % en pasos del 5 %
+                        for (int porcentaje = 95; porcentaje >= 10; porcentaje = porcentaje - 5)
+                        {
+                            vuelo.SetVelocidad(vActual * porcentaje / 100.0);
+                            if (!TieneConflictoConAlguno(i, distanciaSeguridad))
+                            {
+                                encontrado = true;
+                                break;
+                            }
+                        }
+
+                        // Si igualmente no se evita el conflicto, probamos a aumentarla del 105 % al 200 %
+                        if (!encontrado)
+                        {
+                            for (int porcentaje = 105; porcentaje <= 200; porcentaje = porcentaje + 5)
+                            {
+                                vuelo.SetVelocidad(vActual * porcentaje / 100.0);
+                                if (!TieneConflictoConAlguno(i, distanciaSeguridad))
+                                {
+                                    encontrado = true;
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        if (!encontrado)
+                        {
+                            vuelo.SetVelocidad(vActual);
+                        }
                     }
                 }
             }
 
-            //Comprobamos si después de los cambios todavía queda algún conflicto
             List<string> conflictosRestantes = DetectarConflictos(distanciaSeguridad);
 
             if (conflictosRestantes.Count == 0)
             {
-                resuelto = true;  
+                resuelto = true;
             }
             else
             {
-                resuelto = false; 
+                resuelto = false;
             }
 
-            //Guardamos las velocidades de prueba y devolvemos las originales a los vuelos
             double[] velocidadesPropuestas = new double[cantidad];
             for (int i = 0; i < cantidad; i++)
             {
@@ -232,6 +277,7 @@ namespace FlightLib
         }
     }
 }
+
     
 
         

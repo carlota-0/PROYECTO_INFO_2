@@ -42,9 +42,10 @@
             // lblInfo
             // 
             lblInfo.BackColor = SystemColors.ControlLightLight;
-            lblInfo.Location = new Point(199, 42);
+            lblInfo.Location = new Point(153, 33);
+            lblInfo.Margin = new Padding(2, 0, 2, 0);
             lblInfo.Name = "lblInfo";
-            lblInfo.Size = new Size(889, 105);
+            lblInfo.Size = new Size(684, 82);
             lblInfo.TabIndex = 0;
             // 
             // dgvPropuestas
@@ -53,11 +54,12 @@
             dgvPropuestas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPropuestas.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvPropuestas.Columns.AddRange(new DataGridViewColumn[] { Aplicar, Vuelo, Vel1, Vel2 });
-            dgvPropuestas.Location = new Point(90, 177);
+            dgvPropuestas.Location = new Point(69, 138);
+            dgvPropuestas.Margin = new Padding(2, 2, 2, 2);
             dgvPropuestas.Name = "dgvPropuestas";
             dgvPropuestas.RowHeadersVisible = false;
             dgvPropuestas.RowHeadersWidth = 82;
-            dgvPropuestas.Size = new Size(1136, 365);
+            dgvPropuestas.Size = new Size(874, 285);
             dgvPropuestas.TabIndex = 1;
             // 
             // Aplicar
@@ -86,9 +88,10 @@
             // 
             // btnAplicar
             // 
-            btnAplicar.Location = new Point(416, 580);
+            btnAplicar.Location = new Point(320, 453);
+            btnAplicar.Margin = new Padding(2, 2, 2, 2);
             btnAplicar.Name = "btnAplicar";
-            btnAplicar.Size = new Size(200, 59);
+            btnAplicar.Size = new Size(154, 46);
             btnAplicar.TabIndex = 2;
             btnAplicar.Text = "Aplicar";
             btnAplicar.UseVisualStyleBackColor = true;
@@ -96,9 +99,10 @@
             // 
             // btnSinCambios
             // 
-            btnSinCambios.Location = new Point(676, 580);
+            btnSinCambios.Location = new Point(520, 453);
+            btnSinCambios.Margin = new Padding(2, 2, 2, 2);
             btnSinCambios.Name = "btnSinCambios";
-            btnSinCambios.Size = new Size(200, 59);
+            btnSinCambios.Size = new Size(154, 46);
             btnSinCambios.TabIndex = 3;
             btnSinCambios.Text = "Sin cambios";
             btnSinCambios.UseVisualStyleBackColor = true;
@@ -106,15 +110,17 @@
             // 
             // FormProponerVelocidades
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1319, 725);
+            ClientSize = new Size(1015, 566);
             Controls.Add(btnSinCambios);
             Controls.Add(btnAplicar);
             Controls.Add(dgvPropuestas);
             Controls.Add(lblInfo);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "FormProponerVelocidades";
             Text = "FormProponerVelocidades";
+            //Load += FormProponerVelocidades_Load;
             ((System.ComponentModel.ISupportInitialize)dgvPropuestas).EndInit();
             ResumeLayout(false);
         }

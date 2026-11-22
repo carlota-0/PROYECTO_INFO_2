@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             dgvLista = new DataGridView();
-            lblTotal = new Label();
             ID = new DataGridViewTextBoxColumn();
             Compañía = new DataGridViewTextBoxColumn();
             Velocidad = new DataGridViewTextBoxColumn();
             actual = new DataGridViewTextBoxColumn();
+            lblTotal = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvLista).BeginInit();
             SuspendLayout();
             // 
@@ -41,20 +41,12 @@
             // 
             dgvLista.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvLista.Columns.AddRange(new DataGridViewColumn[] { ID, Compañía, Velocidad, actual });
-            dgvLista.Location = new Point(300, 144);
+            dgvLista.Location = new Point(216, 84);
+            dgvLista.Margin = new Padding(2);
             dgvLista.Name = "dgvLista";
             dgvLista.RowHeadersWidth = 82;
-            dgvLista.Size = new Size(878, 544);
+            dgvLista.Size = new Size(675, 425);
             dgvLista.TabIndex = 0;
-            // 
-            // lblTotal
-            // 
-            lblTotal.AutoSize = true;
-            lblTotal.Location = new Point(692, 53);
-            lblTotal.Name = "lblTotal";
-            lblTotal.Size = new Size(78, 32);
-            lblTotal.TabIndex = 1;
-            lblTotal.Text = "label1";
             // 
             // ID
             // 
@@ -84,15 +76,26 @@
             actual.Name = "actual";
             actual.Width = 200;
             // 
+            // lblTotal
+            // 
+            lblTotal.AutoSize = true;
+            lblTotal.Location = new Point(553, 35);
+            lblTotal.Name = "lblTotal";
+            lblTotal.Size = new Size(59, 25);
+            lblTotal.TabIndex = 1;
+            lblTotal.Text = "label1";
+            // 
             // FormListaVuelos
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1448, 785);
+            ClientSize = new Size(1114, 613);
             Controls.Add(lblTotal);
             Controls.Add(dgvLista);
+            Margin = new Padding(2);
             Name = "FormListaVuelos";
             Text = "Lista de vuelos";
+            Load += FormListaVuelos_Load;
             ((System.ComponentModel.ISupportInitialize)dgvLista).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -101,10 +104,10 @@
         #endregion
 
         private DataGridView dgvLista;
-        private Label lblTotal;
         private DataGridViewTextBoxColumn ID;
         private DataGridViewTextBoxColumn Compañía;
         private DataGridViewTextBoxColumn Velocidad;
         private DataGridViewTextBoxColumn actual;
+        private Label lblTotal;
     }
 }

@@ -7,8 +7,8 @@ namespace InterfazGrafica
     public partial class Form1 : Form
     {
         private FlightPlanList listaVuelos = new FlightPlanList();
-        private double distanciaSeguridad = 50; // Valor por defecto
-        private double tiempoCiclo = 10;
+        private double distanciaSeguridad = 0;
+        private double tiempoCiclo = 0;
         public Form1()
         {
             InitializeComponent();
@@ -89,6 +89,11 @@ namespace InterfazGrafica
             {
                 MessageBox.Show(" Porfavor, introduce o carga primero los planes de vuelo");
                 return; 
+            }
+            if (distanciaSeguridad <= 0 || tiempoCiclo <= 0)
+            {
+                MessageBox.Show("Por favor, introduce primero los parámetros de la simulación.");
+                return;
             }
             FormSimulacion formSim = new FormSimulacion(listaVuelos, this.distanciaSeguridad, this.tiempoCiclo);
             formSim.ShowDialog();

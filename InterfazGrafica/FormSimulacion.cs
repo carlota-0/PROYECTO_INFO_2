@@ -74,7 +74,6 @@ namespace InterfazGrafica
             listaVuelos.Mover(tiempoCiclo);
 
             bool todosHanLlegado = true;
-            bool hayConflicto = false;
 
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
@@ -178,6 +177,13 @@ namespace InterfazGrafica
                 bool resuelto;
                 double[] propuestas = listaVuelos.ProponerVelocidades(distanciaSeg, out resuelto);
 
+                if (!resuelto)
+                {
+                    MessageBox.Show("Aviso: el sistema no ha podido resolver todos los conflictos automáticamente.\n" +
+                                    "Aun aplicando las velocidades propuestas quedarán conflictos sin resolver.",
+                                    "Conflicto sin resolver", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
                 FormProponerVelocidades f = new FormProponerVelocidades(listaVuelos, propuestas, conflictos, distanciaSeg);
                 f.ShowDialog();
             }
@@ -201,27 +207,26 @@ namespace InterfazGrafica
         //Retrocede un paso en el historial de posiciones de todos los vuelos 
         private void btn_Deshacer_Click(object sender, EventArgs e)
         {
-            {
-                PararAutomatica();
-                bool seDeshizo = listaVuelos.DeshacerPaso();
+            PararAutomatica();
+            bool seDeshizo = listaVuelos.DeshacerPaso();
 
-                if (seDeshizo)
+            if (seDeshizo)
+            {
+                int i = 0;
+                while (i < listaVuelos.GetCount())
                 {
-                    int i = 0;
-                    while (i < listaVuelos.GetCount())
-                    {
-                        FlightPlan plan = listaVuelos.GetFlightPlan(i);
-                        dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
-                        i++;
-                    }
-                    ActualizarEstadoAlarma();
-                    panelEspacioAereo.Invalidate();
+                    FlightPlan plan = listaVuelos.GetFlightPlan(i);
+                    dibujosAviones[i].Location = new Point((int)plan.GetCurrentPosition().GetX(), (int)plan.GetCurrentPosition().GetY());
+                    i++;
                 }
-                else
-                {
-                    MessageBox.Show("No hay pasos anteriores para deshacer.");
-                }
+                ActualizarEstadoAlarma();
+                panelEspacioAereo.Invalidate();
             }
+            else
+            {
+                MessageBox.Show("No hay pasos anteriores para deshacer.");
+            }
+
         }
 
         private void btnReiniciar_Click(object sender, EventArgs e)

@@ -25,7 +25,6 @@ namespace InterfazGrafica
             this.propuestas = propuestas;
             this.distanciaSeg = distanciaSeg;
 
-            // Texto de arriba con los conflictos
             string texto = "Conflictos detectados:\n";
             for (int i = 0; i < conflictos.Count; i++)
             {
@@ -38,13 +37,18 @@ namespace InterfazGrafica
             CargarTabla();
         }
 
-        // Rellena la tabla con TODOS los vuelos (la fila i corresponde al vuelo i)
+        // Rellena la tabla con TODOS los vuelos marca aquellos cuya velocidad propuesta varía
         private void CargarTabla()
         {
+            if (listaVuelos == null)
+            {
+                return;
+            }
+            dgvPropuestas.Rows.Clear();
+
             for (int i = 0; i < listaVuelos.GetCount(); i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
-
                 // Marcamos la casilla solo si la propuesta cambia la velocidad
                 bool cambia = Math.Abs(propuestas[i] - plan.GetVelocidad()) > 0.001;
 
@@ -55,20 +59,7 @@ namespace InterfazGrafica
             }
         }
 
-
-        private void dgvPropuestas_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-
-
-        private void btnSinCambios_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.Cancel;   // cierra el formulario
-            MessageBox.Show("No se han aplicado cambios a las velocidades de los vuelos.");
-        }
-
+        //Valida y aplica las velocidades propuestas de los vuelos seleccionados comprobando si persisten conflictos
         private void btnAplicar_Click(object sender, EventArgs e)
         {
             // Confirmamos cualquier celda que se esté editando
@@ -78,36 +69,37 @@ namespace InterfazGrafica
             double[] originales = new double[cantidad];
             double[] nuevas = new double[cantidad];
 
-            // PASO 1: leer la tabla y comprobar que los datos son válidos
             for (int i = 0; i < cantidad; i++)
             {
                 FlightPlan plan = listaVuelos.GetFlightPlan(i);
                 originales[i] = plan.GetVelocidad();
-                nuevas[i] = originales[i];   // por defecto no cambia
+                nuevas[i] = originales[i];
 
                 bool marcado = Convert.ToBoolean(dgvPropuestas.Rows[i].Cells[0].Value);
                 if (marcado)
                 {
                     double v;
                     string texto = Convert.ToString(dgvPropuestas.Rows[i].Cells[3].Value);
+                    if (texto == null)
+                    {
+                        texto = "";
+                    }
 
                     if (!double.TryParse(texto, out v) || v <= 0)
                     {
                         MessageBox.Show("La velocidad del vuelo " + plan.GetId() +
                                         " no es válida. Escribe un número mayor que 0.");
-                        return;   // nos quedamos en el formulario
+                        return;
                     }
                     nuevas[i] = v;
                 }
             }
 
-            // PASO 2: aplicar las velocidades
             for (int i = 0; i < cantidad; i++)
             {
                 listaVuelos.GetFlightPlan(i).SetVelocidad(nuevas[i]);
             }
 
-            // PASO 3: comprobar si con esas velocidades aún quedan conflictos
             List<string> restantes = listaVuelos.DetectarConflictos(distanciaSeg);
             if (restantes.Count > 0)
             {
@@ -127,8 +119,20 @@ namespace InterfazGrafica
                 }
             }
 
-            this.DialogResult = DialogResult.OK;   // esto cierra el formulario
+            this.DialogResult = DialogResult.OK;
             MessageBox.Show("Se han aplicado los cambios a las velocidades de los vuelos.");
+        }
+
+        //Cierra el formulario sin modificar las velocidades de ningún vuelo
+        private void btnSinCambios_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;   // cierra el formulario
+            MessageBox.Show("No se han aplicado cambios a las velocidades de los vuelos.");
+        }
+
+        private void dgvPropuestas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

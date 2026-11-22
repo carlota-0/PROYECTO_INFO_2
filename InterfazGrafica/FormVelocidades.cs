@@ -12,15 +12,15 @@ namespace InterfazGrafica
     public partial class FormVelocidades : Form
     {
         private FlightPlanList lista;
-        private bool aplicado = false;   // se pone a true cuando pulsamos Aplicar
+        private bool aplicado = false;
 
-        // Constructor sin parámetros (lo necesita el diseñador de Visual Studio)
+        // Constructor sin parámetros 
         public FormVelocidades()
         {
             InitializeComponent();
         }
 
-        // Constructor que se usa desde FormSimulacion
+        //Recibe la lista de vuelos desde el formulario de simulación y carga la tabla
         public FormVelocidades(FlightPlanList lista)
         {
             InitializeComponent();
@@ -28,13 +28,13 @@ namespace InterfazGrafica
             CargarDatos();
         }
 
-        // Para que FormSimulacion pueda preguntar si se aplicó algo
+        //Devuelve true si el usuario ha aplicado cambios de velocidad
         public bool HaAplicado()
         {
             return aplicado;
         }
 
-        // Rellena la tabla con los vuelos de la lista
+        //Rellena la tabla con los identificadores y velocidades actuales de los vuelos
         private void CargarDatos()
         {
             if (lista == null) return;
@@ -47,25 +47,22 @@ namespace InterfazGrafica
             }
         }
 
-
-
-        // Botón Aplicar: lee la tabla y cambia las velocidades, sin cerrar la ventana
+        //Valida las nuevas velocidades introducidas en la tabla y las aplica a los vuelos
         private void btnAceptar_Click(object sender, EventArgs e)
         {
-            if (lista == null) return;
+            if (lista == null)
+            {
+                return;
+            }
 
+            dgvVelocidades.EndEdit();
             double[] nuevas = new double[lista.GetCount()];
 
-            // 1º comprobamos que todas las velocidades están bien
             for (int i = 0; i < lista.GetCount(); i++)
             {
                 string texto = Convert.ToString(dgvVelocidades.Rows[i].Cells["colVelocidad"].Value);
 
-                try
-                {
-                    nuevas[i] = Convert.ToDouble(texto);
-                }
-                catch
+                if (!double.TryParse(texto, out nuevas[i]))
                 {
                     MessageBox.Show("Vuelo " + lista.GetFlightPlan(i).GetId() + ": escribe un número");
                     return;
@@ -78,7 +75,6 @@ namespace InterfazGrafica
                 }
             }
 
-            // 2º si todo está bien, cambiamos las velocidades
             for (int i = 0; i < lista.GetCount(); i++)
             {
                 lista.GetFlightPlan(i).SetVelocidad(nuevas[i]);
@@ -89,6 +85,7 @@ namespace InterfazGrafica
             MessageBox.Show("Velocidades aplicadas.");
         }
 
+        // Cierra el formulario de modificación de velocidades
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             Close();
